@@ -60,7 +60,6 @@ export default function HomePage() {
             </Link>
             <span className="inline-flex items-center gap-2 text-sm text-white/80">
               <Heart className="h-4 w-4 fill-[var(--coral)] text-[var(--coral)]" />
-              Kyla &amp; Cedes
             </span>
           </div>
         </motion.div>
