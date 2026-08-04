@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+:root {
+  --cream: #f7f1e8;
+  --sand: #efe4d4;
+  --surface: #fffaf3;
+  --ink: #1c2d30;
+  --muted: #5d6f72;
+  --line: #d9cbb8;
+  --teal: #1f6f78;
+  --teal-soft: #d7ecee;
+  --amber: #e0a045;
+  --amber-deep: #9a6418;
+  --amber-soft: #f6e5c8;
+  --coral: #d76b5c;
+  --sky: #8eb8c0;
+  --background: var(--cream);
+  --foreground: var(--ink);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(1200px 500px at 10% -10%, #f0c27a33, transparent 55%),
+    radial-gradient(900px 420px at 95% 0%, #1f6f7830, transparent 50%),
+    linear-gradient(180deg, #f7f1e8 0%, #efe6d8 48%, #e8f0f0 100%);
+  color: var(--foreground);
+  font-family: var(--font-body), system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--teal) 30%, white);
+}
+
+.field {
+  width: 100%;
+  border-radius: 1rem;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 0.75rem 1rem;
+  font-size: 0.925rem;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.field:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--teal) 18%, transparent);
+}
+
+.horizon-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--ink) 6%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--ink) 6%, transparent) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to bottom, black, transparent 85%);
+}
+
+@keyframes drift {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+.animate-drift {
+  animation: drift 7s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-shimmer {
+  background-size: 200% 200%;
+  animation: shimmer 8s linear infinite;
+}
