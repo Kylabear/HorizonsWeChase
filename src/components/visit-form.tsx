@@ -121,7 +121,7 @@ export function VisitForm({ placeId, placeName }: VisitFormProps) {
               onClick={() =>
                 setForm((f) => ({ ...f, food_worth_price: option.value }))
               }
-              className={`rounded-full px-4 py-2 text-sm transition ${
+              className={`min-h-11 rounded-full px-4 py-2 text-sm transition ${
                 form.food_worth_price === option.value
                   ? "bg-[var(--ink)] text-[var(--cream)]"
                   : "bg-[var(--sand)] text-[var(--muted)] hover:text-[var(--ink)]"
@@ -151,7 +151,7 @@ export function VisitForm({ placeId, placeName }: VisitFormProps) {
               onClick={() =>
                 setForm((f) => ({ ...f, return_intent: option.value }))
               }
-              className={`rounded-full px-4 py-2 text-sm transition ${
+              className={`min-h-11 rounded-full px-4 py-2 text-sm transition ${
                 form.return_intent === option.value
                   ? "bg-[var(--teal)] text-white"
                   : "bg-[var(--sand)] text-[var(--muted)] hover:text-[var(--ink)]"
@@ -191,7 +191,7 @@ export function VisitForm({ placeId, placeName }: VisitFormProps) {
       <button
         type="submit"
         disabled={loading}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[var(--ink)] px-5 py-3 text-sm font-medium text-[var(--cream)] transition hover:bg-[var(--teal)] disabled:opacity-60 sm:w-auto"
+        className="inline-flex w-full min-h-12 items-center justify-center gap-2 rounded-full bg-[var(--ink)] px-5 py-3 text-sm font-medium text-[var(--cream)] transition hover:bg-[var(--teal)] disabled:opacity-60 sm:w-auto"
       >
         {loading ? (
           <Loader2 className="h-4 w-4 animate-spin" />

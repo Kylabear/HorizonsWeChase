@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { MapPin, Navigation, Star } from "lucide-react";
 import type { Place } from "@/lib/types";
-import { PLACE_TYPE_LABELS } from "@/lib/types";
+import { PLACE_TYPE_LABELS, normalizePlaceType } from "@/lib/types";
 import { averageRating, cn, formatDate } from "@/lib/utils";
 
 interface PlaceCardProps {
@@ -28,7 +28,7 @@ export function PlaceCard({ place, index = 0 }: PlaceCardProps) {
         ease: [0.22, 1, 0.36, 1],
       }}
       whileHover={{ y: -4 }}
-      className="group relative overflow-hidden rounded-[1.4rem] border border-[var(--line)] bg-[var(--surface)] shadow-[0_20px_50px_-30px_rgba(28,45,48,0.45)]"
+      className="group relative overflow-hidden rounded-[1.25rem] border border-[var(--line)] bg-[var(--surface)] shadow-[0_20px_50px_-30px_rgba(28,45,48,0.45)] sm:rounded-[1.4rem]"
     >
       <Link href={`/places/${place.id}`} className="block">
         <div className="relative aspect-[16/10] overflow-hidden bg-[var(--sand)]">
@@ -38,7 +38,7 @@ export function PlaceCard({ place, index = 0 }: PlaceCardProps) {
               alt={place.name}
               fill
               className="object-cover transition duration-700 group-hover:scale-105"
-              sizes="(max-width: 768px) 100vw, 33vw"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               unoptimized={photo.startsWith("/uploads")}
             />
           ) : (
@@ -48,7 +48,7 @@ export function PlaceCard({ place, index = 0 }: PlaceCardProps) {
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-[var(--ink)]/55 via-transparent to-transparent" />
           <span className="absolute left-3 top-3 rounded-full bg-[var(--cream)]/90 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.12em] text-[var(--ink)] backdrop-blur">
-            {PLACE_TYPE_LABELS[place.type]}
+            {PLACE_TYPE_LABELS[normalizePlaceType(place.type)]}
           </span>
           {place.is_visited && avg !== null && (
             <span className="absolute bottom-3 right-3 inline-flex items-center gap-1 rounded-full bg-[var(--cream)]/95 px-2.5 py-1 text-xs font-medium text-[var(--ink)]">
@@ -59,7 +59,7 @@ export function PlaceCard({ place, index = 0 }: PlaceCardProps) {
         </div>
 
         <div className="space-y-2 p-4 sm:p-5">
-          <h3 className="font-[family-name:var(--font-display)] text-2xl leading-tight text-[var(--ink)]">
+          <h3 className="font-[family-name:var(--font-display)] text-[clamp(1.35rem,5vw,1.65rem)] leading-tight text-[var(--ink)]">
             {place.name}
           </h3>
           <p className="flex items-start gap-1.5 text-sm text-[var(--muted)]">

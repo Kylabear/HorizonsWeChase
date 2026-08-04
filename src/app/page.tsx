@@ -21,7 +21,7 @@ export default function HomePage() {
       <div className="pointer-events-none absolute -left-24 bottom-10 h-72 w-72 rounded-full bg-[radial-gradient(circle,#f0c27a66,transparent_70%)] blur-2xl animate-drift" />
       <div className="pointer-events-none absolute -right-16 top-28 h-64 w-64 rounded-full bg-[radial-gradient(circle,#1f6f7866,transparent_70%)] blur-2xl animate-drift [animation-delay:1.5s]" />
 
-      <section className="relative mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-end px-5 pb-16 pt-24 sm:justify-center sm:px-8 sm:pb-24">
+      <section className="relative mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-end px-4 pb-[max(4rem,env(safe-area-inset-bottom))] pt-24 sm:justify-center sm:px-8 sm:pb-24">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -46,14 +46,14 @@ export default function HomePage() {
           </h1>
 
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/85 sm:text-xl">
-            A private atlas of restaurants, coffee shops, and landmarks —
+            A private atlas of restaurants, coffee shops, and horizons —
             planned together, rated together, remembered together.
           </p>
 
           <div className="mt-9 flex flex-wrap items-center gap-3">
             <Link
               href="/login"
-              className="group inline-flex items-center gap-2 rounded-full bg-[var(--cream)] px-6 py-3 text-sm font-medium text-[var(--ink)] transition hover:bg-white"
+              className="group inline-flex min-h-12 items-center gap-2 rounded-full bg-[var(--cream)] px-6 py-3 text-sm font-medium text-[var(--ink)] transition hover:bg-white"
             >
               Open our list
               <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />

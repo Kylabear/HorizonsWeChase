@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { deletePlace, getPlace, updatePlace } from "@/lib/places";
-import type { PlaceType } from "@/lib/types";
+import { normalizePlaceType } from "@/lib/types";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -38,7 +38,7 @@ export async function PATCH(request: Request, { params }: Params) {
     const body = await request.json();
     const place = await updatePlace(id, {
       name: body.name,
-      type: body.type as PlaceType | undefined,
+      type: body.type ? normalizePlaceType(body.type) : undefined,
       description: body.description,
       location: body.location,
       nearby_landmarks: body.nearby_landmarks,

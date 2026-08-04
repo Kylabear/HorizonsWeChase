@@ -11,7 +11,7 @@ export default async function AdminPage() {
   const places = await listPlaces();
 
   return (
-    <div className="mx-auto max-w-5xl px-5 py-8 sm:px-8 sm:py-10">
+    <div className="mx-auto max-w-5xl px-4 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:px-8 sm:py-10">
       <AdminPlaceManager initialPlaces={places} />
     </div>
   );

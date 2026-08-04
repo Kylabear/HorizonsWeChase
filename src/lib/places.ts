@@ -85,7 +85,7 @@ function normalizePlace(row: Record<string, unknown>): Place {
   return {
     id: String(row.id),
     name: String(row.name),
-    type: row.type as Place["type"],
+    type: normalizePlaceType(row.type),
     description: (row.description as string) ?? null,
     location: String(row.location),
     nearby_landmarks: (row.nearby_landmarks as string) ?? null,

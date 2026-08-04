@@ -4,13 +4,21 @@
 create extension if not exists "pgcrypto";
 
 do $$ begin
-  create type place_type as enum ('restaurant', 'coffee_shop', 'landmark', 'other');
+  create type place_type as enum ('restaurant', 'coffee_shop', 'horizon', 'other');
 exception when duplicate_object then null;
 end $$;
 
 do $$ begin
   create type return_intent as enum ('plan_to_return', 'never_return', 'undecided');
 exception when duplicate_object then null;
+end $$;
+
+-- If you already ran an older schema with "landmark", migrate it:
+do $$ begin
+  alter type place_type rename value 'landmark' to 'horizon';
+exception
+  when undefined_object then null;
+  when invalid_parameter_value then null;
 end $$;
 
 create table if not exists places (
@@ -42,6 +50,3 @@ create index if not exists places_is_visited_idx on places (is_visited);
 create index if not exists places_created_at_idx on places (created_at desc);
 
 -- Storage: create bucket "place-photos" (public) in the Supabase dashboard.
--- Or via SQL (requires storage schema privileges):
--- insert into storage.buckets (id, name, public) values ('place-photos', 'place-photos', true)
--- on conflict do nothing;

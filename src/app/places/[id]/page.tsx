@@ -16,6 +16,7 @@ import { StarRating } from "@/components/star-rating";
 import {
   PLACE_TYPE_LABELS,
   RETURN_INTENT_LABELS,
+  normalizePlaceType,
 } from "@/lib/types";
 import { averageRating, formatDate } from "@/lib/utils";
 
@@ -32,17 +33,17 @@ export default async function PlaceDetailPage({ params }: Params) {
   const avg = averageRating(place);
 
   return (
-    <div className="mx-auto max-w-5xl px-5 py-8 sm:px-8 sm:py-10">
+    <div className="mx-auto max-w-5xl px-4 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:px-8 sm:py-10">
       <Link
         href="/bucket-list"
-        className="mb-6 inline-flex items-center gap-2 text-sm text-[var(--muted)] transition hover:text-[var(--ink)]"
+        className="mb-5 inline-flex min-h-11 items-center gap-2 text-sm text-[var(--muted)] transition hover:text-[var(--ink)]"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to our list
       </Link>
 
-      <div className="overflow-hidden rounded-[2rem] border border-[var(--line)] bg-[var(--surface)]">
-        <div className="relative aspect-[21/9] min-h-[220px] bg-[var(--sand)]">
+      <div className="overflow-hidden rounded-[1.5rem] border border-[var(--line)] bg-[var(--surface)] sm:rounded-[2rem]">
+        <div className="relative aspect-[4/3] min-h-[200px] bg-[var(--sand)] sm:aspect-[21/9] sm:min-h-[220px]">
           {place.photos[0] ? (
             <Image
               src={place.photos[0]}
@@ -57,15 +58,15 @@ export default async function PlaceDetailPage({ params }: Params) {
             <div className="absolute inset-0 bg-[linear-gradient(135deg,#1f6f78,#17353a_50%,#d76b5c)]" />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-[var(--ink)]/70 via-[var(--ink)]/20 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
+          <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-8">
             <span className="rounded-full bg-[var(--cream)]/90 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--ink)]">
-              {PLACE_TYPE_LABELS[place.type]}
+              {PLACE_TYPE_LABELS[normalizePlaceType(place.type)]}
             </span>
-            <h1 className="mt-3 font-[family-name:var(--font-display)] text-4xl text-white sm:text-5xl">
+            <h1 className="mt-3 font-[family-name:var(--font-display)] text-[clamp(1.75rem,7vw,3rem)] leading-tight text-white">
               {place.name}
             </h1>
-            <p className="mt-2 flex items-center gap-1.5 text-white/85">
-              <MapPin className="h-4 w-4" />
+            <p className="mt-2 flex items-start gap-1.5 text-sm text-white/85 sm:text-base">
+              <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
               {place.location}
             </p>
           </div>
@@ -91,10 +92,10 @@ export default async function PlaceDetailPage({ params }: Params) {
           </div>
         )}
 
-        <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[1.2fr_0.8fr]">
-          <div className="space-y-6">
+        <div className="grid gap-6 p-4 sm:gap-8 sm:p-8 lg:grid-cols-[1.2fr_0.8fr]">
+          <div className="min-w-0 space-y-6">
             {place.description && (
-              <p className="text-lg leading-relaxed text-[var(--ink)]/80">
+              <p className="text-base leading-relaxed text-[var(--ink)]/80 sm:text-lg">
                 {place.description}
               </p>
             )}
@@ -211,7 +212,7 @@ export default async function PlaceDetailPage({ params }: Params) {
               <div className="flex justify-between gap-3">
                 <dt className="text-[var(--muted)]">Type</dt>
                 <dd className="font-medium text-[var(--ink)]">
-                  {PLACE_TYPE_LABELS[place.type]}
+                  {PLACE_TYPE_LABELS[normalizePlaceType(place.type)]}
                 </dd>
               </div>
               <div className="flex justify-between gap-3">

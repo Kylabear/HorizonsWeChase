@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { createPlace, listPlaces } from "@/lib/places";
-import type { PlaceType } from "@/lib/types";
+import { normalizePlaceType } from "@/lib/types";
 
 export async function GET() {
   const session = await auth();
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     const place = await createPlace(
       {
         name: body.name,
-        type: body.type as PlaceType,
+        type: normalizePlaceType(body.type),
         description: body.description,
         location: body.location,
         nearby_landmarks: body.nearby_landmarks,

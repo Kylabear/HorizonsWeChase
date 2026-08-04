@@ -31,6 +31,8 @@
 
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -38,30 +40,50 @@ body {
     radial-gradient(1200px 500px at 10% -10%, #f0c27a33, transparent 55%),
     radial-gradient(900px 420px at 95% 0%, #1f6f7830, transparent 50%),
     linear-gradient(180deg, #f7f1e8 0%, #efe6d8 48%, #e8f0f0 100%);
+  background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-body), system-ui, sans-serif;
   min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
 ::selection {
   background: color-mix(in oklab, var(--teal) 30%, white);
 }
 
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
 .field {
   width: 100%;
+  max-width: 100%;
   border-radius: 1rem;
   border: 1px solid var(--line);
   background: var(--surface);
   padding: 0.75rem 1rem;
-  font-size: 0.925rem;
+  /* 16px+ prevents iOS Safari zoom-on-focus */
+  font-size: 1rem;
   color: var(--ink);
   outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .field:focus {
   border-color: var(--teal);
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--teal) 18%, transparent);
+}
+
+textarea.field {
+  resize: vertical;
+  min-height: 4.5rem;
 }
 
 .horizon-grid {
@@ -98,4 +120,11 @@ body {
 .animate-shimmer {
   background-size: 200% 200%;
   animation: shimmer 8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-drift,
+  .animate-shimmer {
+    animation: none;
+  }
 }
