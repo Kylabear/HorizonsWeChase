@@ -1,5 +1,31 @@
 [
   {
+    "id": "b6941a73-877e-4d24-acdb-edc587472d55",
+    "name": "Punchy Palate gastropub",
+    "type": "restaurant",
+    "description": "Punchy Palate Gastropub’s Five-Course Cordilleran Menu, and it was such a unique way to experience local flavors in Baguio. My favorite? Definitely the pesto pasta… and that rattan ice cream was a surprise!\n\n-Hixon C",
+    "location": "3F Hotel Veniz, SB Building, Session Rd. Baguio City",
+    "nearby_landmarks": "Mcdo Session",
+    "recommended_transport": "Jeep",
+    "google_maps_url": "https://maps.app.goo.gl/nKqTuUjrJhj3jZHh7",
+    "photos": [
+      "/uploads/684ab2d3-4344-4f00-be8d-3c896b939e35.png"
+    ],
+    "is_visited": false,
+    "visited_at": null,
+    "rating_ambiance": null,
+    "rating_food": null,
+    "rating_drinks": null,
+    "rating_location": null,
+    "rating_pricing": null,
+    "food_worth_price": null,
+    "return_intent": "undecided",
+    "visit_notes": null,
+    "created_by": "Admin",
+    "created_at": "2026-08-04T11:03:38.188Z",
+    "updated_at": "2026-08-04T11:03:38.188Z"
+  },
+  {
     "id": "seed-1",
     "name": "Sunrise Overlook Café",
     "type": "coffee_shop",

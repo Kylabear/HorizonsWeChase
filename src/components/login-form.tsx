@@ -66,7 +66,7 @@ export function LoginForm() {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           className="field"
-          placeholder="kyla, cedes, or Admin"
+          placeholder="Kindly Input Your Username Bitch!"
           autoComplete="username"
         />
       </label>

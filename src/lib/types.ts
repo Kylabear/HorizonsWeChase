@@ -1,4 +1,4 @@
-export type PlaceType = "restaurant" | "coffee_shop" | "landmark" | "other";
+export type PlaceType = "restaurant" | "coffee_shop" | "horizon" | "other";
 export type ReturnIntent = "plan_to_return" | "never_return" | "undecided";
 export type UserRole = "user" | "admin";
 
@@ -52,7 +52,7 @@ export interface VisitInput {
 export const PLACE_TYPE_LABELS: Record<PlaceType, string> = {
   restaurant: "Restaurant",
   coffee_shop: "Coffee Shop",
-  landmark: "Landmark",
+  horizon: "Horizon",
   other: "Other",
 };
 
@@ -61,3 +61,12 @@ export const RETURN_INTENT_LABELS: Record<ReturnIntent, string> = {
   never_return: "Never again",
   undecided: "Undecided",
 };
+
+/** Normalize legacy DB/local values (e.g. landmark → horizon). */
+export function normalizePlaceType(value: unknown): PlaceType {
+  if (value === "landmark" || value === "horizon") return "horizon";
+  if (value === "restaurant" || value === "coffee_shop" || value === "other") {
+    return value;
+  }
+  return "other";
+}

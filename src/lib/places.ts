@@ -2,6 +2,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import type { Place, PlaceInput, VisitInput } from "./types";
+import { normalizePlaceType } from "./types";
 import { getSupabaseAdmin, isSupabaseConfigured } from "./supabase";
 
 const DATA_PATH = path.join(process.cwd(), "data", "places.json");
