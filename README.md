@@ -24,7 +24,7 @@ A private shared bucket list for two — restaurants, coffee shops, and landmark
 | Username | Password         | Role  |
 |----------|------------------|-------|
 | kyla     | MyprettyBeybb    | user  |
-| cedes    | MyCutieBeybb     | user  |
+| cedes    | 123@testingpass  | user  |
 | Admin    | RomantiziceLife  | admin |
 
 ## Local setup

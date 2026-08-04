@@ -19,7 +19,7 @@ export const APP_USERS: AppUser[] = [
   {
     id: "2",
     username: "cedes",
-    password: process.env.USER_CEDES_PASSWORD || "MyCutieBeybb",
+    password: process.env.USER_CEDES_PASSWORD || "123@testingpass",
     name: "Cedes",
     role: "user",
   },
