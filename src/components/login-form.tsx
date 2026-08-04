@@ -54,7 +54,7 @@ export function LoginForm() {
           Welcome back
         </h1>
         <p className="text-sm text-[var(--muted)]">
-          Just the two of you — and one quiet admin door.
+          Lets G!
         </p>
       </div>
 
