@@ -35,7 +35,7 @@ export default function HomePage() {
             className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3 py-1.5 text-xs font-medium uppercase tracking-[0.18em] text-white/90 backdrop-blur"
           >
             <Compass className="h-3.5 w-3.5" />
-            For two wanderers
+            Wanderers
           </motion.p>
 
           <h1 className="mt-6 font-[family-name:var(--font-display)] text-[clamp(3.4rem,11vw,7rem)] leading-[0.9] tracking-[-0.02em] text-white drop-shadow-[0_8px_30px_rgba(0,0,0,0.35)]">
@@ -47,7 +47,7 @@ export default function HomePage() {
 
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/85 sm:text-xl">
             A private atlas of restaurants, coffee shops, and horizons —
-            planned together, rated together, remembered together.
+            planned, rated , remembered together.
           </p>
 
           <div className="mt-9 flex flex-wrap items-center gap-3">
