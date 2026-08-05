@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { MapPin, Navigation, Star } from "lucide-react";
 import type { Place } from "@/lib/types";
 import { PLACE_TYPE_LABELS, normalizePlaceType } from "@/lib/types";
@@ -15,7 +16,19 @@ interface PlaceCardProps {
 
 export function PlaceCard({ place, index = 0 }: PlaceCardProps) {
   const avg = averageRating(place);
-  const photo = place.photos[0];
+  const photos = place.photos;
+  const [photoIndex, setPhotoIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (photos.length <= 1 || paused) return;
+    const id = window.setInterval(() => {
+      setPhotoIndex((i) => (i + 1) % photos.length);
+    }, 3400);
+    return () => window.clearInterval(id);
+  }, [photos.length, paused]);
+
+  const photo = photos[photoIndex] ?? photos[0];
 
   return (
     <motion.article
@@ -29,18 +42,31 @@ export function PlaceCard({ place, index = 0 }: PlaceCardProps) {
       }}
       whileHover={{ y: -4 }}
       className="group relative overflow-hidden rounded-[1.25rem] border border-[var(--line)] bg-[var(--surface)] shadow-[0_20px_50px_-30px_rgba(28,45,48,0.45)] sm:rounded-[1.4rem]"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
     >
       <Link href={`/places/${place.id}`} className="block">
         <div className="relative aspect-[16/10] overflow-hidden bg-[var(--sand)]">
           {photo ? (
-            <Image
-              src={photo}
-              alt={place.name}
-              fill
-              className="object-cover transition duration-700 group-hover:scale-105"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              unoptimized={photo.startsWith("/uploads")}
-            />
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={photo}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4 }}
+                className="absolute inset-0"
+              >
+                <Image
+                  src={photo}
+                  alt={place.name}
+                  fill
+                  className="object-cover transition duration-500 ease-out group-hover:scale-125"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  unoptimized={photo.startsWith("/uploads")}
+                />
+              </motion.div>
+            </AnimatePresence>
           ) : (
             <div className="absolute inset-0 flex items-center justify-center bg-[radial-gradient(circle_at_30%_20%,#f3d7b0_0%,transparent_45%),linear-gradient(145deg,#1f6f78_0%,#0f3d42_55%,#17353a_100%)]">
               <Navigation className="h-10 w-10 text-white/70" />
@@ -55,6 +81,21 @@ export function PlaceCard({ place, index = 0 }: PlaceCardProps) {
               <Star className="h-3 w-3 fill-[var(--amber)] text-[var(--amber)]" />
               {avg.toFixed(1)}
             </span>
+          )}
+          {photos.length > 1 && (
+            <div className="absolute bottom-3 left-3 flex gap-1">
+              {photos.map((url, i) => (
+                <span
+                  key={url}
+                  className={cn(
+                    "h-1 rounded-full transition-all",
+                    i === photoIndex
+                      ? "w-4 bg-white"
+                      : "w-1 bg-white/45",
+                  )}
+                />
+              ))}
+            </div>
           )}
         </div>
 

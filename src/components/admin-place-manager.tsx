@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import type { Place, PlaceType } from "@/lib/types";
 import { PLACE_TYPE_LABELS, normalizePlaceType } from "@/lib/types";
+import { PhotoPreviewCarousel } from "@/components/photo-preview-carousel";
 
 const EMPTY_FORM = {
   name: "",
@@ -396,34 +397,15 @@ export function AdminPlaceManager({ initialPlaces }: AdminPlaceManagerProps) {
                       />
                     </label>
                     {form.photos.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {form.photos.map((url) => (
-                          <div
-                            key={url}
-                            className="relative h-16 w-16 overflow-hidden rounded-xl"
-                          >
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={url}
-                              alt=""
-                              className="h-full w-full object-cover"
-                            />
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setForm((f) => ({
-                                  ...f,
-                                  photos: f.photos.filter((p) => p !== url),
-                                }))
-                              }
-                              className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/65 text-white"
-                              aria-label="Remove photo"
-                            >
-                              <X className="h-3 w-3" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
+                      <PhotoPreviewCarousel
+                        photos={form.photos}
+                        onRemove={(url) =>
+                          setForm((f) => ({
+                            ...f,
+                            photos: f.photos.filter((p) => p !== url),
+                          }))
+                        }
+                      />
                     )}
                   </div>
                 </Field>
