@@ -11,13 +11,15 @@ import { cn } from "@/lib/utils";
 interface BucketListViewProps {
   places: Place[];
   userName?: string | null;
+  role?: string | null;
 }
 
-export function BucketListView({ places, userName }: BucketListViewProps) {
+export function BucketListView({ places, userName, role }: BucketListViewProps) {
   const searchParams = useSearchParams();
   const initialTab =
     searchParams.get("tab") === "visited" ? "visited" : "wishlist";
   const [tab, setTab] = useState<"wishlist" | "visited">(initialTab);
+  const isAdmin = role === "admin";
 
   const wishlist = useMemo(
     () => places.filter((p) => !p.is_visited),
@@ -25,6 +27,10 @@ export function BucketListView({ places, userName }: BucketListViewProps) {
   );
   const visited = useMemo(() => places.filter((p) => p.is_visited), [places]);
   const shown = tab === "wishlist" ? wishlist : visited;
+
+  const title = isAdmin
+    ? `Places you need to organize${userName ? `, ${userName}` : ""}`
+    : `Places we'll chase My Beybb${userName ? ` ${userName}` : ""}`;
 
   return (
     <div className="space-y-6 sm:space-y-8">
@@ -42,8 +48,7 @@ export function BucketListView({ places, userName }: BucketListViewProps) {
             Shared with love
           </p>
           <h1 className="mt-3 max-w-2xl font-[family-name:var(--font-display)] text-[clamp(2rem,9vw,3.75rem)] leading-[1.05] text-[var(--ink)]">
-            Places we&apos;ll chase
-            {userName ? `, ${userName}` : ""}
+            {title}
           </h1>
           <p className="mt-4 max-w-xl text-sm text-[var(--muted)] sm:text-base">
             A living map of dinners, coffee stops, and horizons — mark places
