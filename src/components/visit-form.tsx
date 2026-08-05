@@ -74,7 +74,7 @@ export function VisitForm({ placeId, placeName }: VisitFormProps) {
         </h2>
         <p className="mt-1 text-sm text-[var(--muted)]">
           Mark <span className="text-[var(--ink)]">{placeName}</span> as visited
-          and leave your shared review.
+          and leave your own review — only you will see it.
         </p>
       </div>
 
@@ -135,7 +135,7 @@ export function VisitForm({ placeId, placeName }: VisitFormProps) {
 
       <fieldset className="space-y-3">
         <legend className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-          Would we return?
+          Would you return?
         </legend>
         <div className="flex flex-wrap gap-2">
           {(
@@ -168,7 +168,7 @@ export function VisitForm({ placeId, placeName }: VisitFormProps) {
           htmlFor="visit_notes"
           className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--muted)]"
         >
-          Shared notes
+          Your notes
         </label>
         <textarea
           id="visit_notes"

@@ -46,8 +46,8 @@ export function BucketListView({ places, userName }: BucketListViewProps) {
             {userName ? `, ${userName}` : ""}
           </h1>
           <p className="mt-4 max-w-xl text-sm text-[var(--muted)] sm:text-base">
-            A living map of dinners, coffee stops, and horizons waiting for the
-            two of you — and a scrapbook of the ones already claimed.
+            A living map of dinners, coffee stops, and horizons — mark places
+            done on your own account, with ratings that stay private to you.
           </p>
           <div className="mt-6 flex flex-wrap gap-2 text-sm sm:gap-3">
             <span className="rounded-full bg-[var(--amber-soft)] px-3 py-1.5 text-[var(--amber-deep)]">
@@ -99,7 +99,7 @@ export function BucketListView({ places, userName }: BucketListViewProps) {
           <p className="mt-2 text-sm text-[var(--muted)]">
             {tab === "wishlist"
               ? "Ask Admin to add restaurants, cafés, or horizons."
-              : "When you mark a place visited, it lands here automatically."}
+              : "When you mark a place visited, it lands here on your account only."}
           </p>
         </div>
       ) : (

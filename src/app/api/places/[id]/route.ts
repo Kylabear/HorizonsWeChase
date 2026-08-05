@@ -13,7 +13,8 @@ export async function GET(_request: Request, { params }: Params) {
 
   const { id } = await params;
   try {
-    const place = await getPlace(id);
+    const username = session.user.username || session.user.name;
+    const place = await getPlace(id, username);
     if (!place) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
@@ -44,6 +45,7 @@ export async function PATCH(request: Request, { params }: Params) {
       nearby_landmarks: body.nearby_landmarks,
       recommended_transport: body.recommended_transport,
       google_maps_url: body.google_maps_url,
+      tiktok_link: body.tiktok_link,
       photos: body.photos,
     });
     return NextResponse.json(place);

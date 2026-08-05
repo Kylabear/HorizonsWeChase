@@ -10,7 +10,8 @@ export async function GET() {
   }
 
   try {
-    const places = await listPlaces();
+    const username = session.user.username || session.user.name;
+    const places = await listPlaces(username);
     return NextResponse.json(places);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to load places";
@@ -45,6 +46,7 @@ export async function POST(request: Request) {
         nearby_landmarks: body.nearby_landmarks,
         recommended_transport: body.recommended_transport,
         google_maps_url: body.google_maps_url,
+        tiktok_link: body.tiktok_link,
         photos: body.photos || [],
       },
       session.user.username || session.user.name || "Admin",

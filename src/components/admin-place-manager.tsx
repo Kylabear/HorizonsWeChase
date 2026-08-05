@@ -22,6 +22,7 @@ const EMPTY_FORM = {
   nearby_landmarks: "",
   recommended_transport: "",
   google_maps_url: "",
+  tiktok_link: "",
   photos: [] as string[],
 };
 
@@ -65,6 +66,7 @@ export function AdminPlaceManager({ initialPlaces }: AdminPlaceManagerProps) {
       nearby_landmarks: place.nearby_landmarks || "",
       recommended_transport: place.recommended_transport || "",
       google_maps_url: place.google_maps_url || "",
+      tiktok_link: place.tiktok_link || "",
       photos: place.photos || [],
     });
     setError("");
@@ -106,6 +108,7 @@ export function AdminPlaceManager({ initialPlaces }: AdminPlaceManagerProps) {
         nearby_landmarks: form.nearby_landmarks.trim(),
         recommended_transport: form.recommended_transport.trim(),
         google_maps_url: form.google_maps_url.trim(),
+        tiktok_link: form.tiktok_link.trim(),
         photos: form.photos,
       };
 
@@ -194,8 +197,7 @@ export function AdminPlaceManager({ initialPlaces }: AdminPlaceManagerProps) {
                 </p>
                 <p className="mt-0.5 line-clamp-2 text-sm text-[var(--muted)]">
                   {PLACE_TYPE_LABELS[normalizePlaceType(place.type)]} ·{" "}
-                  {place.location} ·{" "}
-                  {place.is_visited ? "Visited" : "Wishlist"}
+                  {place.location}
                 </p>
               </button>
               <div className="flex gap-2">
@@ -357,6 +359,22 @@ export function AdminPlaceManager({ initialPlaces }: AdminPlaceManagerProps) {
                     }
                     className="field"
                     placeholder="https://maps.google.com/..."
+                  />
+                </Field>
+
+                <Field label="TikTok link">
+                  <input
+                    type="text"
+                    inputMode="url"
+                    value={form.tiktok_link}
+                    onChange={(e) =>
+                      setForm((f) => ({
+                        ...f,
+                        tiktok_link: e.target.value,
+                      }))
+                    }
+                    className="field"
+                    placeholder="https://www.tiktok.com/... or any video/doc link"
                   />
                 </Field>
 

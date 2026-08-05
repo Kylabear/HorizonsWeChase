@@ -27,7 +27,8 @@ export default async function PlaceDetailPage({ params }: Params) {
   if (!session?.user) redirect("/login");
 
   const { id } = await params;
-  const place = await getPlace(id);
+  const username = session.user.username || session.user.name;
+  const place = await getPlace(id, username);
   if (!place) notFound();
 
   const avg = averageRating(place);
@@ -113,17 +114,30 @@ export default async function PlaceDetailPage({ params }: Params) {
               />
             </div>
 
-            {place.google_maps_url && (
-              <a
-                href={place.google_maps_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full bg-[var(--teal)] px-5 py-2.5 text-sm font-medium text-white transition hover:bg-[var(--ink)]"
-              >
-                Open in Google Maps
-                <ExternalLink className="h-4 w-4" />
-              </a>
-            )}
+            <div className="flex flex-wrap gap-2">
+              {place.google_maps_url && (
+                <a
+                  href={place.google_maps_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full bg-[var(--teal)] px-5 py-2.5 text-sm font-medium text-white transition hover:bg-[var(--ink)]"
+                >
+                  Open in Google Maps
+                  <ExternalLink className="h-4 w-4" />
+                </a>
+              )}
+              {place.tiktok_link && (
+                <a
+                  href={place.tiktok_link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full bg-[var(--ink)] px-5 py-2.5 text-sm font-medium text-[var(--cream)] transition hover:bg-[var(--teal)]"
+                >
+                  Open TikTok link
+                  <ExternalLink className="h-4 w-4" />
+                </a>
+              )}
+            </div>
 
             {place.is_visited ? (
               <div className="space-y-5 rounded-[1.4rem] border border-[var(--line)] bg-[var(--cream)] p-5 sm:p-6">
@@ -133,7 +147,7 @@ export default async function PlaceDetailPage({ params }: Params) {
                       Visited {formatDate(place.visited_at)}
                     </p>
                     <h2 className="mt-1 font-[family-name:var(--font-display)] text-3xl text-[var(--ink)]">
-                      Our shared review
+                      Your review
                     </h2>
                   </div>
                   {avg !== null && (
@@ -204,7 +218,7 @@ export default async function PlaceDetailPage({ params }: Params) {
             </h3>
             <dl className="space-y-3 text-sm">
               <div className="flex justify-between gap-3">
-                <dt className="text-[var(--muted)]">Status</dt>
+                <dt className="text-[var(--muted)]">Your status</dt>
                 <dd className="font-medium text-[var(--ink)]">
                   {place.is_visited ? "Visited" : "On wishlist"}
                 </dd>

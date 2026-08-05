@@ -82,7 +82,7 @@ export function PlaceCard({ place, index = 0 }: PlaceCardProps) {
             >
               {place.is_visited
                 ? `Visited ${formatDate(place.visited_at)}`
-                : "On our list"}
+                : "On your list"}
             </span>
           </div>
         </div>

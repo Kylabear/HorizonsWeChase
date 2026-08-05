@@ -11,7 +11,9 @@ export interface Place {
   nearby_landmarks: string | null;
   recommended_transport: string | null;
   google_maps_url: string | null;
+  tiktok_link: string | null;
   photos: string[];
+  /** Current user's visit status (personal, not shared). */
   is_visited: boolean;
   visited_at: string | null;
   rating_ambiance: number | null;
@@ -35,6 +37,7 @@ export interface PlaceInput {
   nearby_landmarks?: string;
   recommended_transport?: string;
   google_maps_url?: string;
+  tiktok_link?: string;
   photos?: string[];
 }
 
@@ -49,6 +52,21 @@ export interface VisitInput {
   visit_notes?: string;
 }
 
+export interface UserVisit {
+  id: string;
+  place_id: string;
+  username: string;
+  visited_at: string;
+  rating_ambiance: number;
+  rating_food: number;
+  rating_drinks: number;
+  rating_location: number;
+  rating_pricing: number;
+  food_worth_price: boolean;
+  return_intent: ReturnIntent;
+  visit_notes: string | null;
+}
+
 export const PLACE_TYPE_LABELS: Record<PlaceType, string> = {
   restaurant: "Restaurant",
   coffee_shop: "Coffee Shop",
@@ -57,7 +75,7 @@ export const PLACE_TYPE_LABELS: Record<PlaceType, string> = {
 };
 
 export const RETURN_INTENT_LABELS: Record<ReturnIntent, string> = {
-  plan_to_return: "We'd go again",
+  plan_to_return: "I'd go again",
   never_return: "Never again",
   undecided: "Undecided",
 };

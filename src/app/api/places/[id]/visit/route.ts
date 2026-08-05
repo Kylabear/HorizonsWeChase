@@ -11,6 +11,11 @@ export async function POST(request: Request, { params }: Params) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const username = session.user.username || session.user.name;
+  if (!username) {
+    return NextResponse.json({ error: "Missing username" }, { status: 400 });
+  }
+
   const { id } = await params;
   try {
     const body = await request.json();
@@ -33,20 +38,25 @@ export async function POST(request: Request, { params }: Params) {
       }
     }
 
-    const place = await markVisited(id, {
-      rating_ambiance: Number(body.rating_ambiance),
-      rating_food: Number(body.rating_food),
-      rating_drinks: Number(body.rating_drinks),
-      rating_location: Number(body.rating_location),
-      rating_pricing: Number(body.rating_pricing),
-      food_worth_price: Boolean(body.food_worth_price),
-      return_intent: body.return_intent as ReturnIntent,
-      visit_notes: body.visit_notes,
-    });
+    const place = await markVisited(
+      id,
+      {
+        rating_ambiance: Number(body.rating_ambiance),
+        rating_food: Number(body.rating_food),
+        rating_drinks: Number(body.rating_drinks),
+        rating_location: Number(body.rating_location),
+        rating_pricing: Number(body.rating_pricing),
+        food_worth_price: Boolean(body.food_worth_price),
+        return_intent: body.return_intent as ReturnIntent,
+        visit_notes: body.visit_notes,
+      },
+      username,
+    );
 
     return NextResponse.json(place);
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to mark visited";
+    const message =
+      error instanceof Error ? error.message : "Failed to mark visited";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

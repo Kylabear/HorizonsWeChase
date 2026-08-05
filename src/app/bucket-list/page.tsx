@@ -8,7 +8,8 @@ export default async function BucketListPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const places = await listPlaces();
+  const username = session.user.username || session.user.name;
+  const places = await listPlaces(username);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:px-8 sm:py-10">
