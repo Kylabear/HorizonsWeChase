@@ -6,8 +6,19 @@ import { motion } from "framer-motion";
 import { Heart, Plus, Sparkles } from "lucide-react";
 import { PlaceCard } from "./place-card";
 import { PlaceFormModal } from "./place-form-modal";
-import type { Place } from "@/lib/types";
+import type { Place, PlaceType } from "@/lib/types";
+import { PLACE_TYPE_LABELS, normalizePlaceType } from "@/lib/types";
 import { cn } from "@/lib/utils";
+
+type CategoryFilter = "all" | PlaceType;
+
+const CATEGORY_FILTERS: { id: CategoryFilter; label: string }[] = [
+  { id: "all", label: "All" },
+  { id: "horizon", label: PLACE_TYPE_LABELS.horizon },
+  { id: "restaurant", label: PLACE_TYPE_LABELS.restaurant },
+  { id: "coffee_shop", label: PLACE_TYPE_LABELS.coffee_shop },
+  { id: "other", label: PLACE_TYPE_LABELS.other },
+];
 
 interface BucketListViewProps {
   places: Place[];
@@ -19,6 +30,7 @@ export function BucketListView({ places, userName }: BucketListViewProps) {
   const initialTab =
     searchParams.get("tab") === "visited" ? "visited" : "wishlist";
   const [tab, setTab] = useState<"wishlist" | "visited">(initialTab);
+  const [category, setCategory] = useState<CategoryFilter>("all");
   const [addOpen, setAddOpen] = useState(false);
 
   const wishlist = useMemo(
@@ -26,7 +38,26 @@ export function BucketListView({ places, userName }: BucketListViewProps) {
     [places],
   );
   const visited = useMemo(() => places.filter((p) => p.is_visited), [places]);
-  const shown = tab === "wishlist" ? wishlist : visited;
+  const tabbed = tab === "wishlist" ? wishlist : visited;
+
+  const shown = useMemo(() => {
+    if (category === "all") return tabbed;
+    return tabbed.filter((p) => normalizePlaceType(p.type) === category);
+  }, [tabbed, category]);
+
+  const categoryCounts = useMemo(() => {
+    const counts: Record<CategoryFilter, number> = {
+      all: tabbed.length,
+      horizon: 0,
+      restaurant: 0,
+      coffee_shop: 0,
+      other: 0,
+    };
+    for (const place of tabbed) {
+      counts[normalizePlaceType(place.type)] += 1;
+    }
+    return counts;
+  }, [tabbed]);
 
   const title = `Places we'll chase My Beybb${userName ? ` ${userName}` : ""}`;
 
@@ -104,19 +135,40 @@ export function BucketListView({ places, userName }: BucketListViewProps) {
         </p>
       </div>
 
+      <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:thin]">
+        {CATEGORY_FILTERS.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            onClick={() => setCategory(item.id)}
+            className={cn(
+              "shrink-0 rounded-full px-3 py-1.5 text-xs font-medium transition sm:px-3.5 sm:py-2 sm:text-sm",
+              category === item.id
+                ? "bg-[var(--teal)] text-white"
+                : "border border-[var(--line)] bg-[var(--surface)] text-[var(--muted)] hover:text-[var(--ink)]",
+            )}
+          >
+            {item.label}
+            <span className="ml-1.5 opacity-70">{categoryCounts[item.id]}</span>
+          </button>
+        ))}
+      </div>
+
       {shown.length === 0 ? (
         <div className="rounded-[1.25rem] border border-dashed border-[var(--line)] bg-[var(--surface)] px-5 py-12 text-center sm:rounded-[1.5rem] sm:px-6 sm:py-16">
           <p className="font-[family-name:var(--font-display)] text-[clamp(1.5rem,6vw,1.875rem)] text-[var(--ink)]">
             {tab === "wishlist" ? "The list is clear" : "No visits logged yet"}
           </p>
           <p className="mt-2 text-sm text-[var(--muted)]">
-            {tab === "wishlist"
-              ? "Tap Add place above to start your shared bucket list."
-              : "When you mark a place visited, it lands here on your account only."}
+            {category !== "all"
+              ? `No ${PLACE_TYPE_LABELS[category as PlaceType].toLowerCase()} places here yet.`
+              : tab === "wishlist"
+                ? "Tap Add place above to start your shared bucket list."
+                : "When you mark a place visited, it lands here on your account only."}
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+        <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
           {shown.map((place, index) => (
             <PlaceCard key={place.id} place={place} index={index} />
           ))}
