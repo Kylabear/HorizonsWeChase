@@ -3,9 +3,8 @@
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { Heart, Plus, Sparkles } from "lucide-react";
+import { Heart, Sparkles } from "lucide-react";
 import { PlaceCard } from "./place-card";
-import { PlaceFormModal } from "./place-form-modal";
 import type { Place, PlaceType } from "@/lib/types";
 import { PLACE_TYPE_LABELS, normalizePlaceType } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -31,7 +30,6 @@ export function BucketListView({ places, userName }: BucketListViewProps) {
     searchParams.get("tab") === "visited" ? "visited" : "wishlist";
   const [tab, setTab] = useState<"wishlist" | "visited">(initialTab);
   const [category, setCategory] = useState<CategoryFilter>("all");
-  const [addOpen, setAddOpen] = useState(false);
 
   const wishlist = useMemo(
     () => places.filter((p) => !p.is_visited),
@@ -76,19 +74,9 @@ export function BucketListView({ places, userName }: BucketListViewProps) {
             <Heart className="h-3.5 w-3.5 fill-[var(--coral)] text-[var(--coral)]" />
             Shared with love
           </p>
-          <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <h1 className="max-w-2xl font-[family-name:var(--font-display)] text-[clamp(2rem,9vw,3.75rem)] leading-[1.05] text-[var(--ink)]">
-              {title}
-            </h1>
-            <button
-              type="button"
-              onClick={() => setAddOpen(true)}
-              className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-[var(--ink)] px-5 py-2.5 text-sm font-medium text-[var(--cream)] transition hover:bg-[var(--teal)]"
-            >
-              <Plus className="h-4 w-4" />
-              Add place
-            </button>
-          </div>
+          <h1 className="mt-3 max-w-2xl font-[family-name:var(--font-display)] text-[clamp(2rem,9vw,3.75rem)] leading-[1.05] text-[var(--ink)]">
+            {title}
+          </h1>
           <p className="mt-4 max-w-xl text-sm text-[var(--muted)] sm:text-base">
             A living map of dinners, coffee stops, and horizons — add, edit, and
             mark places done on your own account.
@@ -163,7 +151,7 @@ export function BucketListView({ places, userName }: BucketListViewProps) {
             {category !== "all"
               ? `No ${PLACE_TYPE_LABELS[category as PlaceType].toLowerCase()} places here yet.`
               : tab === "wishlist"
-                ? "Tap Add place above to start your shared bucket list."
+                ? "Tap Add place in the header to start your shared bucket list."
                 : "When you mark a place visited, it lands here on your account only."}
           </p>
         </div>
@@ -174,8 +162,6 @@ export function BucketListView({ places, userName }: BucketListViewProps) {
           ))}
         </div>
       )}
-
-      <PlaceFormModal open={addOpen} onClose={() => setAddOpen(false)} />
     </div>
   );
 }
