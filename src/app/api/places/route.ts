@@ -24,9 +24,6 @@ export async function POST(request: Request) {
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  if (session.user.role !== "admin") {
-    return NextResponse.json({ error: "Admin only" }, { status: 403 });
-  }
 
   try {
     const body = await request.json();
@@ -47,9 +44,11 @@ export async function POST(request: Request) {
         recommended_transport: body.recommended_transport,
         google_maps_url: body.google_maps_url,
         tiktok_link: body.tiktok_link,
+        opens_at: body.opens_at,
+        closes_at: body.closes_at,
         photos: body.photos || [],
       },
-      session.user.username || session.user.name || "Admin",
+      session.user.username || session.user.name || "user",
     );
 
     return NextResponse.json(place, { status: 201 });

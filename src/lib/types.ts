@@ -1,6 +1,6 @@
 export type PlaceType = "restaurant" | "coffee_shop" | "horizon" | "other";
 export type ReturnIntent = "plan_to_return" | "never_return" | "undecided";
-export type UserRole = "user" | "admin";
+export type UserRole = "user";
 
 export interface Place {
   id: string;
@@ -12,6 +12,8 @@ export interface Place {
   recommended_transport: string | null;
   google_maps_url: string | null;
   tiktok_link: string | null;
+  opens_at: string | null;
+  closes_at: string | null;
   photos: string[];
   /** Current user's visit status (personal, not shared). */
   is_visited: boolean;
@@ -38,6 +40,8 @@ export interface PlaceInput {
   recommended_transport?: string;
   google_maps_url?: string;
   tiktok_link?: string;
+  opens_at?: string;
+  closes_at?: string;
   photos?: string[];
 }
 

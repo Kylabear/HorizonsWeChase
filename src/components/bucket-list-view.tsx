@@ -3,23 +3,23 @@
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { Heart, Sparkles } from "lucide-react";
+import { Heart, Plus, Sparkles } from "lucide-react";
 import { PlaceCard } from "./place-card";
+import { PlaceFormModal } from "./place-form-modal";
 import type { Place } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 interface BucketListViewProps {
   places: Place[];
   userName?: string | null;
-  role?: string | null;
 }
 
-export function BucketListView({ places, userName, role }: BucketListViewProps) {
+export function BucketListView({ places, userName }: BucketListViewProps) {
   const searchParams = useSearchParams();
   const initialTab =
     searchParams.get("tab") === "visited" ? "visited" : "wishlist";
   const [tab, setTab] = useState<"wishlist" | "visited">(initialTab);
-  const isAdmin = role === "admin";
+  const [addOpen, setAddOpen] = useState(false);
 
   const wishlist = useMemo(
     () => places.filter((p) => !p.is_visited),
@@ -28,9 +28,7 @@ export function BucketListView({ places, userName, role }: BucketListViewProps) 
   const visited = useMemo(() => places.filter((p) => p.is_visited), [places]);
   const shown = tab === "wishlist" ? wishlist : visited;
 
-  const title = isAdmin
-    ? `Places you need to organize${userName ? `, ${userName}` : ""}`
-    : `Places we'll chase My Beybb${userName ? ` ${userName}` : ""}`;
+  const title = `Places we'll chase My Beybb${userName ? ` ${userName}` : ""}`;
 
   return (
     <div className="space-y-6 sm:space-y-8">
@@ -47,12 +45,22 @@ export function BucketListView({ places, userName, role }: BucketListViewProps) 
             <Heart className="h-3.5 w-3.5 fill-[var(--coral)] text-[var(--coral)]" />
             Shared with love
           </p>
-          <h1 className="mt-3 max-w-2xl font-[family-name:var(--font-display)] text-[clamp(2rem,9vw,3.75rem)] leading-[1.05] text-[var(--ink)]">
-            {title}
-          </h1>
+          <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <h1 className="max-w-2xl font-[family-name:var(--font-display)] text-[clamp(2rem,9vw,3.75rem)] leading-[1.05] text-[var(--ink)]">
+              {title}
+            </h1>
+            <button
+              type="button"
+              onClick={() => setAddOpen(true)}
+              className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-[var(--ink)] px-5 py-2.5 text-sm font-medium text-[var(--cream)] transition hover:bg-[var(--teal)]"
+            >
+              <Plus className="h-4 w-4" />
+              Add place
+            </button>
+          </div>
           <p className="mt-4 max-w-xl text-sm text-[var(--muted)] sm:text-base">
-            A living map of dinners, coffee stops, and horizons — mark places
-            done on your own account, with ratings that stay private to you.
+            A living map of dinners, coffee stops, and horizons — add, edit, and
+            mark places done on your own account.
           </p>
           <div className="mt-6 flex flex-wrap gap-2 text-sm sm:gap-3">
             <span className="rounded-full bg-[var(--amber-soft)] px-3 py-1.5 text-[var(--amber-deep)]">
@@ -103,7 +111,7 @@ export function BucketListView({ places, userName, role }: BucketListViewProps) 
           </p>
           <p className="mt-2 text-sm text-[var(--muted)]">
             {tab === "wishlist"
-              ? "Ask Admin to add restaurants, cafés, or horizons."
+              ? "Tap Add place above to start your shared bucket list."
               : "When you mark a place visited, it lands here on your account only."}
           </p>
         </div>
@@ -114,6 +122,8 @@ export function BucketListView({ places, userName, role }: BucketListViewProps) 
           ))}
         </div>
       )}
+
+      <PlaceFormModal open={addOpen} onClose={() => setAddOpen(false)} />
     </div>
   );
 }

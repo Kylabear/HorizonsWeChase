@@ -32,3 +32,15 @@ export function formatDate(iso: string | null) {
     year: "numeric",
   });
 }
+
+export function formatTime(value: string | null | undefined) {
+  if (!value) return "";
+  const [h, m] = value.split(":").map(Number);
+  if (Number.isNaN(h) || Number.isNaN(m)) return value;
+  const date = new Date();
+  date.setHours(h, m, 0, 0);
+  return date.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}

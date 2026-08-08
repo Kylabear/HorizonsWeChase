@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { motion } from "framer-motion";
-import { Compass, LogOut, MapPinned, Settings2 } from "lucide-react";
+import { Compass, LogOut, MapPinned } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function NavBar() {
@@ -13,12 +13,7 @@ export function NavBar() {
 
   if (!session?.user) return null;
 
-  const links = [
-    { href: "/bucket-list", label: "Our List", icon: MapPinned },
-    ...(session.user.role === "admin"
-      ? [{ href: "/admin", label: "Admin", icon: Settings2 }]
-      : []),
-  ];
+  const links = [{ href: "/bucket-list", label: "Our List", icon: MapPinned }];
 
   return (
     <motion.header

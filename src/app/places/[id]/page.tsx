@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import {
   ArrowLeft,
   Bus,
+  Clock,
   ExternalLink,
   Landmark,
   MapPin,
@@ -12,13 +13,14 @@ import {
 import { auth } from "@/lib/auth";
 import { getPlace } from "@/lib/places";
 import { VisitForm } from "@/components/visit-form";
+import { PlaceDetailActions } from "@/components/place-detail-actions";
 import { StarRating } from "@/components/star-rating";
 import {
   PLACE_TYPE_LABELS,
   RETURN_INTENT_LABELS,
   normalizePlaceType,
 } from "@/lib/types";
-import { averageRating, formatDate } from "@/lib/utils";
+import { averageRating, formatDate, formatTime } from "@/lib/utils";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -112,7 +114,18 @@ export default async function PlaceDetailPage({ params }: Params) {
                 label="Recommended transport"
                 value={place.recommended_transport || "Not listed yet"}
               />
+              <InfoBlock
+                icon={<Clock className="h-4 w-4" />}
+                label="Hours"
+                value={
+                  place.opens_at || place.closes_at
+                    ? `${formatTime(place.opens_at) || "—"} – ${formatTime(place.closes_at) || "—"}`
+                    : "Not listed yet"
+                }
+              />
             </div>
+
+            <PlaceDetailActions place={place} />
 
             <div className="flex flex-wrap gap-2">
               {place.google_maps_url && (
@@ -221,6 +234,14 @@ export default async function PlaceDetailPage({ params }: Params) {
                 <dt className="text-[var(--muted)]">Your status</dt>
                 <dd className="font-medium text-[var(--ink)]">
                   {place.is_visited ? "Visited" : "On wishlist"}
+                </dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt className="text-[var(--muted)]">Hours</dt>
+                <dd className="font-medium text-[var(--ink)]">
+                  {place.opens_at || place.closes_at
+                    ? `${formatTime(place.opens_at) || "—"} – ${formatTime(place.closes_at) || "—"}`
+                    : "—"}
                 </dd>
               </div>
               <div className="flex justify-between gap-3">

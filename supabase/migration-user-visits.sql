@@ -12,6 +12,10 @@ end $$;
 -- 2) TikTok / video / doc link on places
 alter table places add column if not exists tiktok_link text;
 
+-- 2b) Open / close hours
+alter table places add column if not exists opens_at text;
+alter table places add column if not exists closes_at text;
+
 -- 3) Per-user visits + ratings (each account has its own done status)
 create table if not exists user_visits (
   id uuid primary key default gen_random_uuid(),

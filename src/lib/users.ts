@@ -24,13 +24,6 @@ function getUsers(): AppUser[] {
       name: "Cedes",
       role: "user",
     },
-    {
-      id: "3",
-      username: "Admin",
-      password: process.env.ADMIN_PASSWORD || "RomantiziceLife",
-      name: "Admin",
-      role: "admin",
-    },
   ];
 }
 

@@ -30,9 +30,6 @@ export async function PATCH(request: Request, { params }: Params) {
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  if (session.user.role !== "admin") {
-    return NextResponse.json({ error: "Admin only" }, { status: 403 });
-  }
 
   const { id } = await params;
   try {
@@ -46,6 +43,8 @@ export async function PATCH(request: Request, { params }: Params) {
       recommended_transport: body.recommended_transport,
       google_maps_url: body.google_maps_url,
       tiktok_link: body.tiktok_link,
+      opens_at: body.opens_at,
+      closes_at: body.closes_at,
       photos: body.photos,
     });
     return NextResponse.json(place);
@@ -59,9 +58,6 @@ export async function DELETE(_request: Request, { params }: Params) {
   const session = await auth();
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  if (session.user.role !== "admin") {
-    return NextResponse.json({ error: "Admin only" }, { status: 403 });
   }
 
   const { id } = await params;
