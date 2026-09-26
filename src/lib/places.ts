@@ -134,7 +134,7 @@ function normalizePlace(row: Record<string, unknown>): Place {
     // mountain metadata
     elevation: (row.elevation as number) ?? null,
     hours_needed: (row.hours_needed as string) ?? null,
-    mountain_recommendation: (row.mountain_recommendation as string) ?? null,
+    mountain_recommendation: (row.mountain_recommendation as "diy" | "tour" | null) ?? null,
     ...EMPTY_VISIT,
     created_by: (row.created_by as string) ?? null,
     created_at: String(row.created_at),
