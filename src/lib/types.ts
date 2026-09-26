@@ -54,6 +54,7 @@ export interface PlaceInput {
 }
 
 export interface VisitInput {
+  visited_at: string;
   rating_ambiance: number;
   rating_food: number;
   rating_drinks: number;
@@ -72,11 +73,11 @@ export interface UserVisit {
   place_id: string;
   username: string;
   visited_at: string;
-  rating_ambiance: number;
-  rating_food: number;
-  rating_drinks: number;
-  rating_location: number;
-  rating_pricing: number;
+  rating_ambiance: number | null;
+  rating_food: number | null;
+  rating_drinks: number | null;
+  rating_location: number | null;
+  rating_pricing: number | null;
   food_worth_price: boolean;
   return_intent: ReturnIntent;
   visit_notes: string | null;

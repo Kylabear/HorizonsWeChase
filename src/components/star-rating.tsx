@@ -53,6 +53,11 @@ export function StarRating({
             </Comp>
           );
         })}
+        {readOnly && (
+          <span className="ml-2 text-xs text-[var(--muted)]">
+            {value >= 1 && value <= 5 ? `${value}/5` : "Not rated"}
+          </span>
+        )}
       </div>
     </div>
   );

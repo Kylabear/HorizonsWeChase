@@ -148,17 +148,25 @@ function normalizeVisit(row: Record<string, unknown>): UserVisit {
     place_id: String(row.place_id),
     username: String(row.username),
     visited_at: String(row.visited_at),
-    rating_ambiance: Number(row.rating_ambiance),
-    rating_food: Number(row.rating_food),
-    rating_drinks: Number(row.rating_drinks),
-    rating_location: Number(row.rating_location),
-    rating_pricing: Number(row.rating_pricing),
+    rating_ambiance: normalizeRating(row.rating_ambiance),
+    rating_food: normalizeRating(row.rating_food),
+    rating_drinks: normalizeRating(row.rating_drinks),
+    rating_location: normalizeRating(row.rating_location),
+    rating_pricing: normalizeRating(row.rating_pricing),
     food_worth_price: Boolean(row.food_worth_price),
     return_intent: (row.return_intent as ReturnIntent) || "undecided",
     visit_notes: (row.visit_notes as string) ?? null,
-    mountain_rating: row.mountain_rating !== undefined ? Number(row.mountain_rating) : null,
+    mountain_rating: normalizeRating(row.mountain_rating),
     was_mountain_good: row.was_mountain_good !== undefined ? Boolean(row.was_mountain_good) : null,
   };
+}
+
+function normalizeRating(value: unknown): number | null {
+  if (value === null || value === undefined || value === "") return null;
+  const rating = Number(value);
+  return Number.isFinite(rating) && rating >= 1 && rating <= 5
+    ? rating
+    : null;
 }
 
 function applyVisit(place: Place, visit: UserVisit | undefined): Place {
@@ -364,6 +372,7 @@ export async function markVisited(
   if (!place) throw new Error("Place not found");
 
   const now = new Date().toISOString();
+  const visitedAt = new Date(`${visit.visited_at}T00:00:00.000Z`).toISOString();
   const key = username.toLowerCase();
 
   if (isSupabaseConfigured()) {
@@ -372,7 +381,7 @@ export async function markVisited(
     const payload = {
       place_id: id,
       username: key,
-      visited_at: now,
+      visited_at: visitedAt,
       rating_ambiance: visit.rating_ambiance,
       rating_food: visit.rating_food,
       rating_drinks: visit.rating_drinks,
@@ -405,7 +414,7 @@ export async function markVisited(
       id: existing?.id ?? uuidv4(),
       place_id: id,
       username: key,
-      visited_at: now,
+      visited_at: visitedAt,
       rating_ambiance: visit.rating_ambiance,
       rating_food: visit.rating_food,
       rating_drinks: visit.rating_drinks,
@@ -427,7 +436,7 @@ export async function markVisited(
     id: index >= 0 ? visits[index].id : uuidv4(),
     place_id: id,
     username: key,
-    visited_at: now,
+    visited_at: visitedAt,
     rating_ambiance: visit.rating_ambiance,
     rating_food: visit.rating_food,
     rating_drinks: visit.rating_drinks,

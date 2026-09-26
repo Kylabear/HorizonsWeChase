@@ -5,7 +5,15 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { StarRating } from "./star-rating";
-import type { ReturnIntent } from "@/lib/types";
+import type { ReturnIntent, VisitInput } from "@/lib/types";
+
+function getLocalDateInputValue() {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
 
 interface VisitFormProps {
   placeId: string;
@@ -20,6 +28,7 @@ export function VisitForm({ placeId, placeName, placeType }: VisitFormProps) {
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const [form, setForm] = useState({
+    visited_at: getLocalDateInputValue(),
     rating_ambiance: 0,
     rating_food: 0,
     rating_drinks: 0,
@@ -66,9 +75,10 @@ export function VisitForm({ placeId, placeName, placeType }: VisitFormProps) {
     setLoading(true);
     setError("");
     try {
-      let payload: any;
+      let payload: VisitInput;
       if (placeType === "mountain") {
         payload = {
+          visited_at: form.visited_at,
           rating_ambiance: 0,
           rating_food: 0,
           rating_drinks: 0,
@@ -76,7 +86,7 @@ export function VisitForm({ placeId, placeName, placeType }: VisitFormProps) {
           rating_pricing: 0,
           food_worth_price: Boolean(mountainForm.was_mountain_good),
           return_intent: "undecided",
-          visit_notes: mountainForm.visit_notes || null,
+          visit_notes: mountainForm.visit_notes,
           mountain_rating: Number(mountainForm.mountain_rating) || 0,
           was_mountain_good: Boolean(mountainForm.was_mountain_good),
         };
@@ -118,6 +128,26 @@ export function VisitForm({ placeId, placeName, placeType }: VisitFormProps) {
             Mark <span className="text-[var(--ink)]">{placeName}</span> as visited
             and leave your own review — only you will see it.
           </p>
+        </div>
+
+        <div>
+          <label
+            htmlFor="visited_at"
+            className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--muted)]"
+          >
+            Date visited
+          </label>
+          <input
+            id="visited_at"
+            type="date"
+            required
+            suppressHydrationWarning
+            value={form.visited_at}
+            onChange={(e) =>
+              setForm((current) => ({ ...current, visited_at: e.target.value }))
+            }
+            className="mt-2 min-h-11 w-full rounded-xl border border-[var(--line)] bg-[var(--cream)] px-4 py-2 text-sm text-[var(--ink)] outline-none transition focus:border-[var(--teal)] sm:max-w-xs"
+          />
         </div>
 
         {placeType === "mountain" ? (

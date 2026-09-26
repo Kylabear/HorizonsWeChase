@@ -18,7 +18,10 @@ export function averageRating(place: {
     place.rating_drinks,
     place.rating_location,
     place.rating_pricing,
-  ].filter((r): r is number => typeof r === "number");
+  ].filter(
+    (r): r is number =>
+      typeof r === "number" && Number.isFinite(r) && r >= 1 && r <= 5,
+  );
 
   if (ratings.length === 0) return null;
   return ratings.reduce((a, b) => a + b, 0) / ratings.length;
@@ -26,10 +29,13 @@ export function averageRating(place: {
 
 export function formatDate(iso: string | null) {
   if (!iso) return "";
+  const isDateOnly =
+    /^\d{4}-\d{2}-\d{2}(?:T00:00:00(?:\.0+)?(?:Z|\+00:00))?$/.test(iso);
   return new Date(iso).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
+    ...(isDateOnly ? { timeZone: "UTC" } : {}),
   });
 }
 

@@ -19,6 +19,20 @@ export async function POST(request: Request, { params }: Params) {
   const { id } = await params;
   try {
     const body = await request.json();
+    const visitedAt =
+      typeof body.visited_at === "string" ? body.visited_at : "";
+    const dateTimestamp = Date.parse(`${visitedAt}T00:00:00.000Z`);
+    if (
+      !/^\d{4}-\d{2}-\d{2}$/.test(visitedAt) ||
+      Number.isNaN(dateTimestamp) ||
+      new Date(dateTimestamp).toISOString().slice(0, 10) !== visitedAt
+    ) {
+      return NextResponse.json(
+        { error: "Please provide a valid visit date." },
+        { status: 400 },
+      );
+    }
+
 
     // Support both standard place visits (5 category ratings) and mountain visits
     const isMountainVisit = body.mountain_rating !== undefined || body.was_mountain_good !== undefined;
@@ -54,6 +68,7 @@ export async function POST(request: Request, { params }: Params) {
     const place = await markVisited(
       id,
       {
+        visited_at: visitedAt,
         rating_ambiance: Number(body.rating_ambiance) || 0,
         rating_food: Number(body.rating_food) || 0,
         rating_drinks: Number(body.rating_drinks) || 0,

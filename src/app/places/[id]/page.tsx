@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import {
@@ -7,12 +6,12 @@ import {
   Clock,
   ExternalLink,
   Landmark,
-  MapPin,
   RotateCcw,
 } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { getPlace } from "@/lib/places";
 import { VisitForm } from "@/components/visit-form";
+import { PlacePhotoGallery } from "@/components/place-photo-gallery";
 import { PlaceDetailActions } from "@/components/place-detail-actions";
 import { StarRating } from "@/components/star-rating";
 import {
@@ -46,54 +45,12 @@ export default async function PlaceDetailPage({ params }: Params) {
       </Link>
 
       <div className="overflow-hidden rounded-[1.5rem] border border-[var(--line)] bg-[var(--surface)] sm:rounded-[2rem]">
-        <div className="relative aspect-[4/3] min-h-[200px] bg-[var(--sand)] sm:aspect-[21/9] sm:min-h-[220px]">
-          {place.photos[0] ? (
-            <Image
-              src={place.photos[0]}
-              alt={place.name}
-              fill
-              className="object-cover"
-              sizes="100vw"
-              priority
-              unoptimized={place.photos[0].startsWith("/uploads")}
-            />
-          ) : (
-            <div className="absolute inset-0 bg-[linear-gradient(135deg,#1f6f78,#17353a_50%,#d76b5c)]" />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-[var(--ink)]/70 via-[var(--ink)]/20 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-8">
-            <span className="rounded-full bg-[var(--cream)]/90 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--ink)]">
-              {PLACE_TYPE_LABELS[normalizePlaceType(place.type)]}
-            </span>
-            <h1 className="mt-3 font-[family-name:var(--font-display)] text-[clamp(1.75rem,7vw,3rem)] leading-tight text-white">
-              {place.name}
-            </h1>
-            <p className="mt-2 flex items-start gap-1.5 text-sm text-white/85 sm:text-base">
-              <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
-              {place.location}
-            </p>
-          </div>
-        </div>
-
-        {place.photos.length > 1 && (
-          <div className="flex gap-2 overflow-x-auto border-b border-[var(--line)] p-4">
-            {place.photos.slice(1).map((photo) => (
-              <div
-                key={photo}
-                className="relative h-20 w-28 shrink-0 overflow-hidden rounded-xl"
-              >
-                <Image
-                  src={photo}
-                  alt=""
-                  fill
-                  className="object-cover"
-                  sizes="112px"
-                  unoptimized={photo.startsWith("/uploads")}
-                />
-              </div>
-            ))}
-          </div>
-        )}
+        <PlacePhotoGallery
+          photos={place.photos}
+          placeName={place.name}
+          typeLabel={PLACE_TYPE_LABELS[normalizePlaceType(place.type)]}
+          location={place.location}
+        />
 
         <div className="grid gap-6 p-4 sm:gap-8 sm:p-8 lg:grid-cols-[1.2fr_0.8fr]">
           <div className="min-w-0 space-y-6">
@@ -166,7 +123,7 @@ export default async function PlaceDetailPage({ params }: Params) {
                     </div>
                     {avg !== null && (
                       <p className="rounded-full bg-[var(--amber-soft)] px-3 py-1.5 text-sm font-medium text-[var(--amber-deep)]">
-                        Avg {avg.toFixed(1)} / 5
+                        Rating {avg.toFixed(1)} / 5
                       </p>
                     )}
                   </div>
@@ -174,7 +131,7 @@ export default async function PlaceDetailPage({ params }: Params) {
                   <div className="grid gap-4 sm:grid-cols-1">
                     <StarRating
                       label="Rating"
-                      value={place.rating_ambiance || 0}
+                      value={place.rating_ambiance ?? 0}
                       readOnly
                       size="sm"
                     />
@@ -204,40 +161,45 @@ export default async function PlaceDetailPage({ params }: Params) {
                       </h2>
                     </div>
                     {avg !== null && (
-                      <p className="rounded-full bg-[var(--amber-soft)] px-3 py-1.5 text-sm font-medium text-[var(--amber-deep)]">
-                        Avg {avg.toFixed(1)} / 5
-                      </p>
+                      <div className="text-right">
+                        <p className="rounded-full bg-[var(--amber-soft)] px-3 py-1.5 text-sm font-medium text-[var(--amber-deep)]">
+                          Avg {avg.toFixed(1)} / 5
+                        </p>
+                        <p className="mt-1 text-xs text-[var(--muted)]">
+                          Average of the rated categories below
+                        </p>
+                      </div>
                     )}
                   </div>
 
                   <div className="grid gap-4 sm:grid-cols-2">
                     <StarRating
                       label="Ambiance"
-                      value={place.rating_ambiance || 0}
+                      value={place.rating_ambiance ?? 0}
                       readOnly
                       size="sm"
                     />
                     <StarRating
                       label="Food"
-                      value={place.rating_food || 0}
+                      value={place.rating_food ?? 0}
                       readOnly
                       size="sm"
                     />
                     <StarRating
                       label="Drinks"
-                      value={place.rating_drinks || 0}
+                      value={place.rating_drinks ?? 0}
                       readOnly
                       size="sm"
                     />
                     <StarRating
                       label="Location"
-                      value={place.rating_location || 0}
+                      value={place.rating_location ?? 0}
                       readOnly
                       size="sm"
                     />
                     <StarRating
                       label="Pricing"
-                      value={place.rating_pricing || 0}
+                      value={place.rating_pricing ?? 0}
                       readOnly
                       size="sm"
                     />
