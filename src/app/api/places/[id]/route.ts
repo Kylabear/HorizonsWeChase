@@ -46,6 +46,14 @@ export async function PATCH(request: Request, { params }: Params) {
       opens_at: body.opens_at,
       closes_at: body.closes_at,
       photos: body.photos,
+      elevation: body.elevation ?? undefined,
+      hours_needed: body.hours_needed ?? undefined,
+      mountain_recommendation:
+        body.mountain_recommendation === "diy" || body.mountain_recommendation === "tour"
+          ? body.mountain_recommendation
+          : body.mountain_recommendation === null
+            ? null
+            : undefined,
     });
     return NextResponse.json(place);
   } catch (error) {

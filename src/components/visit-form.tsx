@@ -42,7 +42,7 @@ export function VisitForm({ placeId, placeName, placeType }: VisitFormProps) {
 
     if (placeType === "mountain") {
       if (mountainForm.mountain_rating < 1) {
-        setError("Please provide a rating for the mountain.");
+        setError("Please rate the mountain experience.");
         return;
       }
     } else {
@@ -68,17 +68,17 @@ export function VisitForm({ placeId, placeName, placeType }: VisitFormProps) {
     try {
       let payload: any;
       if (placeType === "mountain") {
-        // Map mountain form into existing API shape by populating the required rating fields
-        const r = Number(mountainForm.mountain_rating) || 0;
         payload = {
-          rating_ambiance: r,
-          rating_food: r,
-          rating_drinks: r,
-          rating_location: r,
-          rating_pricing: r,
+          rating_ambiance: 0,
+          rating_food: 0,
+          rating_drinks: 0,
+          rating_location: 0,
+          rating_pricing: 0,
           food_worth_price: Boolean(mountainForm.was_mountain_good),
           return_intent: "undecided",
           visit_notes: mountainForm.visit_notes || null,
+          mountain_rating: Number(mountainForm.mountain_rating) || 0,
+          was_mountain_good: Boolean(mountainForm.was_mountain_good),
         };
       } else {
         payload = form;
@@ -123,7 +123,7 @@ export function VisitForm({ placeId, placeName, placeType }: VisitFormProps) {
         {placeType === "mountain" ? (
           <div className="space-y-4">
             <StarRating
-              label="Rating"
+              label="Easy to moderate"
               value={mountainForm.mountain_rating}
               onChange={(v) =>
                 setMountainForm((f) => ({ ...f, mountain_rating: v }))
@@ -162,7 +162,7 @@ export function VisitForm({ placeId, placeName, placeType }: VisitFormProps) {
                 htmlFor="visit_notes"
                 className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--muted)]"
               >
-                Your notes
+                Notes
               </label>
               <textarea
                 id="visit_notes"
@@ -171,7 +171,7 @@ export function VisitForm({ placeId, placeName, placeType }: VisitFormProps) {
                 onChange={(e) =>
                   setMountainForm((f) => ({ ...f, visit_notes: e.target.value }))
                 }
-                placeholder="Notes about the route, conditions, tips…"
+                placeholder="Trail condition, weather, effort level, would you go again?"
                 className="mt-2 w-full rounded-2xl border border-[var(--line)] bg-[var(--cream)] px-4 py-3 text-sm text-[var(--ink)] outline-none transition focus:border-[var(--teal)]"
               />
             </div>

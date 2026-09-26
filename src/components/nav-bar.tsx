@@ -3,16 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
-import { useState } from "react";
 import { motion } from "framer-motion";
-import { Compass, LogOut, MapPinned, Plus } from "lucide-react";
-import { PlaceFormModal } from "@/components/place-form-modal";
+import { Compass, LogOut, MapPinned } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function NavBar() {
   const { data: session } = useSession();
   const pathname = usePathname();
-  const [addOpen, setAddOpen] = useState(false);
 
   if (!session?.user) return null;
 
@@ -40,15 +37,6 @@ export function NavBar() {
           </Link>
 
           <nav className="flex shrink-0 items-center gap-1 sm:gap-2">
-            <button
-              type="button"
-              onClick={() => setAddOpen(true)}
-              aria-label="Add place"
-              className="inline-flex min-h-10 min-w-10 items-center justify-center gap-1.5 rounded-full bg-[var(--ink)] px-2.5 py-2 text-sm text-[var(--cream)] transition hover:bg-[var(--teal)] sm:px-3 sm:py-1.5"
-            >
-              <Plus className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
-              <span className="hidden sm:inline">Add place</span>
-            </button>
             {links.map((link) => {
               const Icon = link.icon;
               const active = pathname.startsWith(link.href);
@@ -81,8 +69,6 @@ export function NavBar() {
           </nav>
         </div>
       </motion.header>
-
-      <PlaceFormModal open={addOpen} onClose={() => setAddOpen(false)} />
     </>
   );
 }

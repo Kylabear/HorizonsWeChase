@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { Heart, Sparkles } from "lucide-react";
+import { Heart, Search, Sparkles } from "lucide-react";
 import { PlaceCard } from "./place-card";
 import type { Place, PlaceType } from "@/lib/types";
 import { PLACE_TYPE_LABELS, normalizePlaceType } from "@/lib/types";
@@ -31,6 +31,7 @@ export function BucketListView({ places, userName }: BucketListViewProps) {
     searchParams.get("tab") === "visited" ? "visited" : "wishlist";
   const [tab, setTab] = useState<"wishlist" | "visited">(initialTab);
   const [category, setCategory] = useState<CategoryFilter>("all");
+  const [search, setSearch] = useState("");
 
   const wishlist = useMemo(
     () => places.filter((p) => !p.is_visited),
@@ -40,9 +41,24 @@ export function BucketListView({ places, userName }: BucketListViewProps) {
   const tabbed = tab === "wishlist" ? wishlist : visited;
 
   const shown = useMemo(() => {
-    if (category === "all") return tabbed;
-    return tabbed.filter((p) => normalizePlaceType(p.type) === category);
-  }, [tabbed, category]);
+    const q = search.trim().toLowerCase();
+    return tabbed.filter((p) => {
+      const matchesCategory = category === "all" || normalizePlaceType(p.type) === category;
+      const haystack = [
+        p.name,
+        p.location,
+        p.nearby_landmarks,
+        p.description,
+        p.type,
+        p.recommended_transport,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      const matchesSearch = !q || haystack.includes(q);
+      return matchesCategory && matchesSearch;
+    });
+  }, [tabbed, category, search]);
 
   const categoryCounts = useMemo(() => {
     const counts: Record<CategoryFilter, number> = {
@@ -125,23 +141,37 @@ export function BucketListView({ places, userName }: BucketListViewProps) {
         </p>
       </div>
 
-      <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:thin]">
-        {CATEGORY_FILTERS.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => setCategory(item.id)}
-            className={cn(
-              "shrink-0 rounded-full px-3 py-1.5 text-xs font-medium transition sm:px-3.5 sm:py-2 sm:text-sm",
-              category === item.id
-                ? "bg-[var(--teal)] text-white"
-                : "border border-[var(--line)] bg-[var(--surface)] text-[var(--muted)] hover:text-[var(--ink)]",
-            )}
-          >
-            {item.label}
-            <span className="ml-1.5 opacity-70">{categoryCounts[item.id]}</span>
-          </button>
-        ))}
+      <div className="flex flex-col gap-3">
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--muted)]" />
+          <input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by place name, location, or keyword"
+            className="w-full rounded-full border border-[var(--line)] bg-[var(--surface)] py-2.5 pl-10 pr-4 text-sm text-[var(--ink)] outline-none transition focus:border-[var(--teal)]"
+            aria-label="Search places"
+          />
+        </div>
+
+        <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:thin]">
+          {CATEGORY_FILTERS.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setCategory(item.id)}
+              className={cn(
+                "shrink-0 rounded-full px-3 py-1.5 text-xs font-medium transition sm:px-3.5 sm:py-2 sm:text-sm",
+                category === item.id
+                  ? "bg-[var(--teal)] text-white"
+                  : "border border-[var(--line)] bg-[var(--surface)] text-[var(--muted)] hover:text-[var(--ink)]",
+              )}
+            >
+              {item.label}
+              <span className="ml-1.5 opacity-70">{categoryCounts[item.id]}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {shown.length === 0 ? (
@@ -153,7 +183,7 @@ export function BucketListView({ places, userName }: BucketListViewProps) {
             {category !== "all"
               ? `No ${PLACE_TYPE_LABELS[category as PlaceType].toLowerCase()} places here yet.`
               : tab === "wishlist"
-                ? "Tap Add place in the header to start your shared bucket list."
+                ? "Your bucket list is empty right now — add a place to start collecting ideas."
                 : "When you mark a place visited, it lands here on your account only."}
           </p>
         </div>

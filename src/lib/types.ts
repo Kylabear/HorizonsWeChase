@@ -101,10 +101,20 @@ export const RETURN_INTENT_LABELS: Record<ReturnIntent, string> = {
 
 /** Normalize legacy DB/local values (e.g. landmark → horizon). */
 export function normalizePlaceType(value: unknown): PlaceType {
-  if (value === "landmark" || value === "horizon") return "horizon";
-  if (value === "mountain") return "mountain";
-  if (value === "restaurant" || value === "coffee_shop" || value === "other") {
-    return value as PlaceType;
+  const normalized =
+    typeof value === "string"
+      ? value.trim().toLowerCase().replace(/[\s-]+/g, "_")
+      : "";
+
+  if (normalized === "landmark" || normalized === "horizon") return "horizon";
+  if (normalized === "mountain") return "mountain";
+  if (
+    normalized === "restaurant" ||
+    normalized === "coffee_shop" ||
+    normalized === "coffee" ||
+    normalized === "other"
+  ) {
+    return normalized as PlaceType;
   }
   return "other";
 }

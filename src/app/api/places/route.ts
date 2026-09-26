@@ -47,6 +47,12 @@ export async function POST(request: Request) {
         opens_at: body.opens_at,
         closes_at: body.closes_at,
         photos: body.photos || [],
+        elevation: body.elevation ?? null,
+        hours_needed: body.hours_needed ?? null,
+        mountain_recommendation:
+          body.mountain_recommendation === "diy" || body.mountain_recommendation === "tour"
+            ? body.mountain_recommendation
+            : null,
       },
       session.user.username || session.user.name || "user",
     );

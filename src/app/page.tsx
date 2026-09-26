@@ -46,8 +46,8 @@ export default function HomePage() {
           </h1>
 
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/85 sm:text-xl">
-            A private atlas of restaurants, coffee shops, and horizons —
-            planned, rated , remembered together.
+            A private atlas of restaurants, coffee shops, horizons, and mountains —
+            planned, rated, and remembered together.
           </p>
 
           <div className="mt-9 flex flex-wrap items-center gap-3">
