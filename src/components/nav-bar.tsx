@@ -3,17 +3,21 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Compass, LogOut, MapPinned } from "lucide-react";
+import { Compass, LogOut, MapPinned, Plus } from "lucide-react";
+import { PlaceFormModal } from "@/components/place-form-modal";
 import { cn } from "@/lib/utils";
 
 export function NavBar() {
   const { data: session } = useSession();
   const pathname = usePathname();
+  const [addOpen, setAddOpen] = useState(false);
 
   if (!session?.user) return null;
 
   const links = [{ href: "/bucket-list", label: "Our List", icon: MapPinned }];
+  const showAddButton = pathname !== "/";
 
   return (
     <>
@@ -57,6 +61,17 @@ export function NavBar() {
                 </Link>
               );
             })}
+            {showAddButton && (
+              <button
+                type="button"
+                onClick={() => setAddOpen(true)}
+                aria-label="Add place"
+                className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full bg-[var(--ink)] px-3 py-2 text-sm font-medium text-[var(--cream)] transition hover:bg-[var(--teal)] sm:px-3.5"
+              >
+                <Plus className="h-4 w-4" />
+                <span className="hidden sm:inline">Add place</span>
+              </button>
+            )}
             <button
               type="button"
               onClick={() => signOut({ callbackUrl: "/" })}
@@ -69,6 +84,7 @@ export function NavBar() {
           </nav>
         </div>
       </motion.header>
+      {showAddButton && <PlaceFormModal open={addOpen} onClose={() => setAddOpen(false)} />}
     </>
   );
 }
