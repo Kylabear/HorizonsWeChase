@@ -1,9 +1,55 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { markVisited } from "@/lib/places";
+import { markVisited, updateVisitDate } from "@/lib/places";
 import type { ReturnIntent } from "@/lib/types";
 
 type Params = { params: Promise<{ id: string }> };
+
+function isValidVisitDate(value: unknown): value is string {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return false;
+  }
+  const timestamp = Date.parse(`${value}T00:00:00.000Z`);
+  return (
+    !Number.isNaN(timestamp) &&
+    new Date(timestamp).toISOString().slice(0, 10) === value
+  );
+}
+
+export async function PATCH(request: Request, { params }: Params) {
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const username = session.user.username || session.user.name;
+  if (!username) {
+    return NextResponse.json({ error: "Missing username" }, { status: 400 });
+  }
+
+  const { id } = await params;
+  try {
+    const body: unknown = await request.json();
+    if (
+      typeof body !== "object" ||
+      body === null ||
+      !("visited_at" in body) ||
+      !isValidVisitDate(body.visited_at)
+    ) {
+      return NextResponse.json(
+        { error: "Please provide a valid visit date." },
+        { status: 400 },
+      );
+    }
+
+    const visitedAt = await updateVisitDate(id, username, body.visited_at);
+    return NextResponse.json({ visited_at: visitedAt });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Failed to update visit date";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}
 
 export async function POST(request: Request, { params }: Params) {
   const session = await auth();
@@ -19,14 +65,8 @@ export async function POST(request: Request, { params }: Params) {
   const { id } = await params;
   try {
     const body = await request.json();
-    const visitedAt =
-      typeof body.visited_at === "string" ? body.visited_at : "";
-    const dateTimestamp = Date.parse(`${visitedAt}T00:00:00.000Z`);
-    if (
-      !/^\d{4}-\d{2}-\d{2}$/.test(visitedAt) ||
-      Number.isNaN(dateTimestamp) ||
-      new Date(dateTimestamp).toISOString().slice(0, 10) !== visitedAt
-    ) {
+    const visitedAt = body.visited_at;
+    if (!isValidVisitDate(visitedAt)) {
       return NextResponse.json(
         { error: "Please provide a valid visit date." },
         { status: 400 },

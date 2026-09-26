@@ -230,6 +230,39 @@ async function getVisitForPlace(
   );
 }
 
+export async function updateVisitDate(
+  placeId: string,
+  username: string,
+  date: string,
+): Promise<string> {
+  const visitedAt = new Date(`${date}T00:00:00.000Z`).toISOString();
+  const key = username.toLowerCase();
+
+  if (isSupabaseConfigured()) {
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from("user_visits")
+      .update({ visited_at: visitedAt, updated_at: new Date().toISOString() })
+      .eq("place_id", placeId)
+      .ilike("username", key)
+      .select("visited_at")
+      .maybeSingle();
+    if (error) throw error;
+    if (!data) throw new Error("Visit not found");
+    return String(data.visited_at);
+  }
+
+  const visits = await readLocalVisits();
+  const index = visits.findIndex(
+    (visit) =>
+      visit.place_id === placeId && visit.username.toLowerCase() === key,
+  );
+  if (index === -1) throw new Error("Visit not found");
+  visits[index] = { ...visits[index], visited_at: visitedAt };
+  await writeLocalVisits(visits);
+  return visitedAt;
+}
+
 export async function listPlaces(username?: string | null): Promise<Place[]> {
   let places: Place[];
   if (isSupabaseConfigured()) {

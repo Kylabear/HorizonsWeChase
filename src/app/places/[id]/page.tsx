@@ -12,6 +12,7 @@ import { auth } from "@/lib/auth";
 import { getPlace } from "@/lib/places";
 import { VisitForm } from "@/components/visit-form";
 import { PlacePhotoGallery } from "@/components/place-photo-gallery";
+import { VisitDateEditor } from "@/components/visit-date-editor";
 import { PlaceDetailActions } from "@/components/place-detail-actions";
 import { StarRating } from "@/components/star-rating";
 import {
@@ -19,7 +20,7 @@ import {
   RETURN_INTENT_LABELS,
   normalizePlaceType,
 } from "@/lib/types";
-import { averageRating, formatDate, formatTime } from "@/lib/utils";
+import { averageRating, formatTime } from "@/lib/utils";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -114,9 +115,10 @@ export default async function PlaceDetailPage({ params }: Params) {
                 <div className="space-y-5 rounded-[1.4rem] border border-[var(--line)] bg-[var(--cream)] p-5 sm:p-6">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                      <p className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--teal)]">
-                        Visited {formatDate(place.visited_at)}
-                      </p>
+                      <VisitDateEditor
+                        placeId={place.id}
+                        visitedAt={place.visited_at ?? ""}
+                      />
                       <h2 className="mt-1 font-[family-name:var(--font-display)] text-3xl text-[var(--ink)]">
                         Your review
                       </h2>
@@ -153,9 +155,10 @@ export default async function PlaceDetailPage({ params }: Params) {
                 <div className="space-y-5 rounded-[1.4rem] border border-[var(--line)] bg-[var(--cream)] p-5 sm:p-6">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                      <p className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--teal)]">
-                        Visited {formatDate(place.visited_at)}
-                      </p>
+                      <VisitDateEditor
+                        placeId={place.id}
+                        visitedAt={place.visited_at ?? ""}
+                      />
                       <h2 className="mt-1 font-[family-name:var(--font-display)] text-3xl text-[var(--ink)]">
                         Your review
                       </h2>
