@@ -325,7 +325,7 @@ export function VisitForm({ placeId, placeName, placeType }: VisitFormProps) {
                 id="visit-confirm-title"
                 className="flex-1 text-sm leading-relaxed"
               >
-                Are you sure you want to mark this as visited beybb?
+                Are you sure you want to mark this as visited beybbi?
               </p>
               <div className="flex shrink-0 gap-2">
                 <button

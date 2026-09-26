@@ -75,7 +75,7 @@ export function BucketListView({ places, userName }: BucketListViewProps) {
     return counts;
   }, [tabbed]);
 
-  const title = `Places we'll chase My Beybb${userName ? ` ${userName}` : ""}`;
+  const title = `Places we'll chase My Beybbi ${userName ? ` ${userName}` : ""}`;
 
   return (
     <div className="space-y-6 sm:space-y-8">
