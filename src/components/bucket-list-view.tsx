@@ -16,6 +16,7 @@ const CATEGORY_FILTERS: { id: CategoryFilter; label: string }[] = [
   { id: "horizon", label: PLACE_TYPE_LABELS.horizon },
   { id: "restaurant", label: PLACE_TYPE_LABELS.restaurant },
   { id: "coffee_shop", label: PLACE_TYPE_LABELS.coffee_shop },
+  { id: "mountain", label: PLACE_TYPE_LABELS.mountain },
   { id: "other", label: PLACE_TYPE_LABELS.other },
 ];
 
@@ -49,6 +50,7 @@ export function BucketListView({ places, userName }: BucketListViewProps) {
       horizon: 0,
       restaurant: 0,
       coffee_shop: 0,
+      mountain: 0,
       other: 0,
     };
     for (const place of tabbed) {

@@ -10,13 +10,15 @@ import type { ReturnIntent } from "@/lib/types";
 interface VisitFormProps {
   placeId: string;
   placeName: string;
+  placeType?: string;
 }
 
-export function VisitForm({ placeId, placeName }: VisitFormProps) {
+export function VisitForm({ placeId, placeName, placeType }: VisitFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [confirmOpen, setConfirmOpen] = useState(false);
+
   const [form, setForm] = useState({
     rating_ambiance: 0,
     rating_food: 0,
@@ -28,20 +30,33 @@ export function VisitForm({ placeId, placeName }: VisitFormProps) {
     visit_notes: "",
   });
 
+  const [mountainForm, setMountainForm] = useState({
+    mountain_rating: 0,
+    was_mountain_good: true,
+    visit_notes: "",
+  });
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
 
-    const ratings = [
-      form.rating_ambiance,
-      form.rating_food,
-      form.rating_drinks,
-      form.rating_location,
-      form.rating_pricing,
-    ];
-    if (ratings.some((r) => r < 1)) {
-      setError("Please rate all five categories.");
-      return;
+    if (placeType === "mountain") {
+      if (mountainForm.mountain_rating < 1) {
+        setError("Please provide a rating for the mountain.");
+        return;
+      }
+    } else {
+      const ratings = [
+        form.rating_ambiance,
+        form.rating_food,
+        form.rating_drinks,
+        form.rating_location,
+        form.rating_pricing,
+      ];
+      if (ratings.some((r) => r < 1)) {
+        setError("Please rate all five categories.");
+        return;
+      }
     }
 
     setConfirmOpen(true);
@@ -51,10 +66,28 @@ export function VisitForm({ placeId, placeName }: VisitFormProps) {
     setLoading(true);
     setError("");
     try {
+      let payload: any;
+      if (placeType === "mountain") {
+        // Map mountain form into existing API shape by populating the required rating fields
+        const r = Number(mountainForm.mountain_rating) || 0;
+        payload = {
+          rating_ambiance: r,
+          rating_food: r,
+          rating_drinks: r,
+          rating_location: r,
+          rating_pricing: r,
+          food_worth_price: Boolean(mountainForm.was_mountain_good),
+          return_intent: "undecided",
+          visit_notes: mountainForm.visit_notes || null,
+        };
+      } else {
+        payload = form;
+      }
+
       const res = await fetch(`/api/places/${placeId}/visit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to save");
@@ -87,109 +120,169 @@ export function VisitForm({ placeId, placeName }: VisitFormProps) {
           </p>
         </div>
 
-        <div className="grid gap-5 sm:grid-cols-2">
-          <StarRating
-            label="Ambiance"
-            value={form.rating_ambiance}
-            onChange={(v) => setForm((f) => ({ ...f, rating_ambiance: v }))}
-          />
-          <StarRating
-            label="Food"
-            value={form.rating_food}
-            onChange={(v) => setForm((f) => ({ ...f, rating_food: v }))}
-          />
-          <StarRating
-            label="Drinks"
-            value={form.rating_drinks}
-            onChange={(v) => setForm((f) => ({ ...f, rating_drinks: v }))}
-          />
-          <StarRating
-            label="Location"
-            value={form.rating_location}
-            onChange={(v) => setForm((f) => ({ ...f, rating_location: v }))}
-          />
-          <StarRating
-            label="Pricing"
-            value={form.rating_pricing}
-            onChange={(v) => setForm((f) => ({ ...f, rating_pricing: v }))}
-          />
-        </div>
+        {placeType === "mountain" ? (
+          <div className="space-y-4">
+            <StarRating
+              label="Rating"
+              value={mountainForm.mountain_rating}
+              onChange={(v) =>
+                setMountainForm((f) => ({ ...f, mountain_rating: v }))
+              }
+            />
 
-        <fieldset className="space-y-3">
-          <legend className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-            Is the food worth the price?
-          </legend>
-          <div className="flex flex-wrap gap-2">
-            {[
-              { value: true, label: "Yes — worth it" },
-              { value: false, label: "No — overpriced" },
-            ].map((option) => (
-              <button
-                key={String(option.value)}
-                type="button"
-                onClick={() =>
-                  setForm((f) => ({ ...f, food_worth_price: option.value }))
-                }
-                className={`min-h-11 rounded-full px-4 py-2 text-sm transition ${
-                  form.food_worth_price === option.value
-                    ? "bg-[var(--ink)] text-[var(--cream)]"
-                    : "bg-[var(--sand)] text-[var(--muted)] hover:text-[var(--ink)]"
-                }`}
+            <fieldset className="space-y-3">
+              <legend className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+                Was the mountain good?
+              </legend>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { value: true, label: "Yes — worth it" },
+                  { value: false, label: "No — not great" },
+                ].map((option) => (
+                  <button
+                    key={String(option.value)}
+                    type="button"
+                    onClick={() =>
+                      setMountainForm((f) => ({ ...f, was_mountain_good: option.value }))
+                    }
+                    className={`min-h-11 rounded-full px-4 py-2 text-sm transition ${
+                      mountainForm.was_mountain_good === option.value
+                        ? "bg-[var(--ink)] text-[var(--cream)]"
+                        : "bg-[var(--sand)] text-[var(--muted)] hover:text-[var(--ink)]"
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+
+            <div>
+              <label
+                htmlFor="visit_notes"
+                className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--muted)]"
               >
-                {option.label}
-              </button>
-            ))}
-          </div>
-        </fieldset>
-
-        <fieldset className="space-y-3">
-          <legend className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-            Would you return?
-          </legend>
-          <div className="flex flex-wrap gap-2">
-            {(
-              [
-                { value: "plan_to_return", label: "Plan to return" },
-                { value: "never_return", label: "Never return" },
-                { value: "undecided", label: "Undecided" },
-              ] as const
-            ).map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() =>
-                  setForm((f) => ({ ...f, return_intent: option.value }))
+                Your notes
+              </label>
+              <textarea
+                id="visit_notes"
+                rows={3}
+                value={mountainForm.visit_notes}
+                onChange={(e) =>
+                  setMountainForm((f) => ({ ...f, visit_notes: e.target.value }))
                 }
-                className={`min-h-11 rounded-full px-4 py-2 text-sm transition ${
-                  form.return_intent === option.value
-                    ? "bg-[var(--teal)] text-white"
-                    : "bg-[var(--sand)] text-[var(--muted)] hover:text-[var(--ink)]"
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
+                placeholder="Notes about the route, conditions, tips…"
+                className="mt-2 w-full rounded-2xl border border-[var(--line)] bg-[var(--cream)] px-4 py-3 text-sm text-[var(--ink)] outline-none transition focus:border-[var(--teal)]"
+              />
+            </div>
           </div>
-        </fieldset>
+        ) : (
+          <>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <StarRating
+                label="Ambiance"
+                value={form.rating_ambiance}
+                onChange={(v) => setForm((f) => ({ ...f, rating_ambiance: v }))}
+              />
+              <StarRating
+                label="Food"
+                value={form.rating_food}
+                onChange={(v) => setForm((f) => ({ ...f, rating_food: v }))}
+              />
+              <StarRating
+                label="Drinks"
+                value={form.rating_drinks}
+                onChange={(v) => setForm((f) => ({ ...f, rating_drinks: v }))}
+              />
+              <StarRating
+                label="Location"
+                value={form.rating_location}
+                onChange={(v) => setForm((f) => ({ ...f, rating_location: v }))}
+              />
+              <StarRating
+                label="Pricing"
+                value={form.rating_pricing}
+                onChange={(v) => setForm((f) => ({ ...f, rating_pricing: v }))}
+              />
+            </div>
 
-        <div>
-          <label
-            htmlFor="visit_notes"
-            className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--muted)]"
-          >
-            Your notes
-          </label>
-          <textarea
-            id="visit_notes"
-            rows={3}
-            value={form.visit_notes}
-            onChange={(e) =>
-              setForm((f) => ({ ...f, visit_notes: e.target.value }))
-            }
-            placeholder="Favorite dish, little moments, tips for next time…"
-            className="mt-2 w-full rounded-2xl border border-[var(--line)] bg-[var(--cream)] px-4 py-3 text-sm text-[var(--ink)] outline-none transition focus:border-[var(--teal)]"
-          />
-        </div>
+            <fieldset className="space-y-3">
+              <legend className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+                Is the food worth the price?
+              </legend>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { value: true, label: "Yes — worth it" },
+                  { value: false, label: "No — overpriced" },
+                ].map((option) => (
+                  <button
+                    key={String(option.value)}
+                    type="button"
+                    onClick={() =>
+                      setForm((f) => ({ ...f, food_worth_price: option.value }))
+                    }
+                    className={`min-h-11 rounded-full px-4 py-2 text-sm transition ${
+                      form.food_worth_price === option.value
+                        ? "bg-[var(--ink)] text-[var(--cream)]"
+                        : "bg-[var(--sand)] text-[var(--muted)] hover:text-[var(--ink)]"
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+
+            <fieldset className="space-y-3">
+              <legend className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+                Would you return?
+              </legend>
+              <div className="flex flex-wrap gap-2">
+                {(
+                  [
+                    { value: "plan_to_return", label: "Plan to return" },
+                    { value: "never_return", label: "Never return" },
+                    { value: "undecided", label: "Undecided" },
+                  ] as const
+                ).map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() =>
+                      setForm((f) => ({ ...f, return_intent: option.value }))
+                    }
+                    className={`min-h-11 rounded-full px-4 py-2 text-sm transition ${
+                      form.return_intent === option.value
+                        ? "bg-[var(--teal)] text-white"
+                        : "bg-[var(--sand)] text-[var(--muted)] hover:text-[var(--ink)]"
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+
+            <div>
+              <label
+                htmlFor="visit_notes"
+                className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--muted)]"
+              >
+                Your notes
+              </label>
+              <textarea
+                id="visit_notes"
+                rows={3}
+                value={form.visit_notes}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, visit_notes: e.target.value }))
+                }
+                placeholder="Favorite dish, little moments, tips for next time…"
+                className="mt-2 w-full rounded-2xl border border-[var(--line)] bg-[var(--cream)] px-4 py-3 text-sm text-[var(--ink)] outline-none transition focus:border-[var(--teal)]"
+              />
+            </div>
+          </>
+        )}
 
         {error && (
           <p className="rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700">

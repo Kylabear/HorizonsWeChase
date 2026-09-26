@@ -20,6 +20,10 @@ const EMPTY_FORM = {
   opens_at: "",
   closes_at: "",
   photos: [] as string[],
+  // mountain fields
+  elevation: null as number | null,
+  hours_needed: "",
+  mountain_recommendation: null as "diy" | "tour" | null,
 };
 
 interface PlaceFormModalProps {
@@ -61,6 +65,9 @@ export function PlaceFormModal({
         opens_at: editing.opens_at || "",
         closes_at: editing.closes_at || "",
         photos: editing.photos || [],
+        elevation: (editing as any).elevation ?? null,
+        hours_needed: (editing as any).hours_needed || "",
+        mountain_recommendation: (editing as any).mountain_recommendation || null,
       });
     } else {
       setForm(EMPTY_FORM);
@@ -107,6 +114,9 @@ export function PlaceFormModal({
         opens_at: form.opens_at.trim(),
         closes_at: form.closes_at.trim(),
         photos: form.photos,
+        elevation: form.elevation ?? null,
+        hours_needed: form.hours_needed || null,
+        mountain_recommendation: form.mountain_recommendation || null,
       };
 
       const res = await fetch(
@@ -213,6 +223,54 @@ export function PlaceFormModal({
                   />
                 </Field>
               </div>
+
+              {form.type === "mountain" && (
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Field label="Elevation (m)">
+                    <input
+                      type="number"
+                      value={form.elevation ?? ""}
+                      onChange={(e) =>
+                        setForm((f) => ({
+                          ...f,
+                          elevation: e.target.value === "" ? null : Number(e.target.value),
+                        }))
+                      }
+                      className="field"
+                      placeholder="e.g. 1892"
+                    />
+                  </Field>
+
+                  <Field label="Hours needed">
+                    <input
+                      value={form.hours_needed}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, hours_needed: e.target.value }))
+                      }
+                      className="field"
+                      placeholder="e.g. 6-8 hours"
+                    />
+                  </Field>
+
+                  <Field label="Recommendation">
+                    <select
+                      value={form.mountain_recommendation ?? ""}
+                      onChange={(e) =>
+                        setForm((f) => ({
+                          ...f,
+                          mountain_recommendation:
+                            e.target.value === "" ? null : (e.target.value as "diy" | "tour"),
+                        }))
+                      }
+                      className="field"
+                    >
+                      <option value="">Select</option>
+                      <option value="diy">DIY</option>
+                      <option value="tour">Tour package</option>
+                    </select>
+                  </Field>
+                </div>
+              )}
 
               <Field label="Description">
                 <textarea

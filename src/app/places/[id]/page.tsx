@@ -153,75 +153,116 @@ export default async function PlaceDetailPage({ params }: Params) {
             </div>
 
             {place.is_visited ? (
-              <div className="space-y-5 rounded-[1.4rem] border border-[var(--line)] bg-[var(--cream)] p-5 sm:p-6">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <p className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--teal)]">
-                      Visited {formatDate(place.visited_at)}
-                    </p>
-                    <h2 className="mt-1 font-[family-name:var(--font-display)] text-3xl text-[var(--ink)]">
-                      Your review
-                    </h2>
+              normalizePlaceType(place.type) === "mountain" ? (
+                <div className="space-y-5 rounded-[1.4rem] border border-[var(--line)] bg-[var(--cream)] p-5 sm:p-6">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--teal)]">
+                        Visited {formatDate(place.visited_at)}
+                      </p>
+                      <h2 className="mt-1 font-[family-name:var(--font-display)] text-3xl text-[var(--ink)]">
+                        Your review
+                      </h2>
+                    </div>
+                    {avg !== null && (
+                      <p className="rounded-full bg-[var(--amber-soft)] px-3 py-1.5 text-sm font-medium text-[var(--amber-deep)]">
+                        Avg {avg.toFixed(1)} / 5
+                      </p>
+                    )}
                   </div>
-                  {avg !== null && (
-                    <p className="rounded-full bg-[var(--amber-soft)] px-3 py-1.5 text-sm font-medium text-[var(--amber-deep)]">
-                      Avg {avg.toFixed(1)} / 5
+
+                  <div className="grid gap-4 sm:grid-cols-1">
+                    <StarRating
+                      label="Rating"
+                      value={place.rating_ambiance || 0}
+                      readOnly
+                      size="sm"
+                    />
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    <span className="rounded-full bg-[var(--sand)] px-3 py-1.5 text-sm text-[var(--ink)]">
+                      Was the mountain good? {place.food_worth_price ? "Yes" : "No"}
+                    </span>
+                  </div>
+
+                  {place.visit_notes && (
+                    <p className="rounded-2xl bg-[var(--surface)] p-4 text-sm leading-relaxed text-[var(--ink)]/80">
+                      {place.visit_notes}
                     </p>
                   )}
                 </div>
+              ) : (
+                <div className="space-y-5 rounded-[1.4rem] border border-[var(--line)] bg-[var(--cream)] p-5 sm:p-6">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--teal)]">
+                        Visited {formatDate(place.visited_at)}
+                      </p>
+                      <h2 className="mt-1 font-[family-name:var(--font-display)] text-3xl text-[var(--ink)]">
+                        Your review
+                      </h2>
+                    </div>
+                    {avg !== null && (
+                      <p className="rounded-full bg-[var(--amber-soft)] px-3 py-1.5 text-sm font-medium text-[var(--amber-deep)]">
+                        Avg {avg.toFixed(1)} / 5
+                      </p>
+                    )}
+                  </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <StarRating
-                    label="Ambiance"
-                    value={place.rating_ambiance || 0}
-                    readOnly
-                    size="sm"
-                  />
-                  <StarRating
-                    label="Food"
-                    value={place.rating_food || 0}
-                    readOnly
-                    size="sm"
-                  />
-                  <StarRating
-                    label="Drinks"
-                    value={place.rating_drinks || 0}
-                    readOnly
-                    size="sm"
-                  />
-                  <StarRating
-                    label="Location"
-                    value={place.rating_location || 0}
-                    readOnly
-                    size="sm"
-                  />
-                  <StarRating
-                    label="Pricing"
-                    value={place.rating_pricing || 0}
-                    readOnly
-                    size="sm"
-                  />
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <StarRating
+                      label="Ambiance"
+                      value={place.rating_ambiance || 0}
+                      readOnly
+                      size="sm"
+                    />
+                    <StarRating
+                      label="Food"
+                      value={place.rating_food || 0}
+                      readOnly
+                      size="sm"
+                    />
+                    <StarRating
+                      label="Drinks"
+                      value={place.rating_drinks || 0}
+                      readOnly
+                      size="sm"
+                    />
+                    <StarRating
+                      label="Location"
+                      value={place.rating_location || 0}
+                      readOnly
+                      size="sm"
+                    />
+                    <StarRating
+                      label="Pricing"
+                      value={place.rating_pricing || 0}
+                      readOnly
+                      size="sm"
+                    />
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    <span className="rounded-full bg-[var(--sand)] px-3 py-1.5 text-sm text-[var(--ink)]">
+                      Food worth the price: {" "}
+                      {place.food_worth_price ? "Yes" : "No"}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--teal-soft)] px-3 py-1.5 text-sm text-[var(--teal)]">
+                      <RotateCcw className="h-3.5 w-3.5" />
+                      {RETURN_INTENT_LABELS[place.return_intent]}
+                    </span>
+                  </div>
+
+                  {place.visit_notes && (
+                    <p className="rounded-2xl bg-[var(--surface)] p-4 text-sm leading-relaxed text-[var(--ink)]/80">
+                      {place.visit_notes}
+                    </p>
+                  )}
                 </div>
-
-                <div className="flex flex-wrap gap-2">
-                  <span className="rounded-full bg-[var(--sand)] px-3 py-1.5 text-sm text-[var(--ink)]">
-                    Food worth the price:{" "}
-                    {place.food_worth_price ? "Yes" : "No"}
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--teal-soft)] px-3 py-1.5 text-sm text-[var(--teal)]">
-                    <RotateCcw className="h-3.5 w-3.5" />
-                    {RETURN_INTENT_LABELS[place.return_intent]}
-                  </span>
-                </div>
-
-                {place.visit_notes && (
-                  <p className="rounded-2xl bg-[var(--surface)] p-4 text-sm leading-relaxed text-[var(--ink)]/80">
-                    {place.visit_notes}
-                  </p>
-                )}
-              </div>
+              )
             ) : (
-              <VisitForm placeId={place.id} placeName={place.name} />
+              <VisitForm placeId={place.id} placeName={place.name} placeType={normalizePlaceType(place.type)} />
             )}
           </div>
 
@@ -262,6 +303,29 @@ export default async function PlaceDetailPage({ params }: Params) {
                   {place.photos.length}
                 </dd>
               </div>
+
+              {normalizePlaceType(place.type) === "mountain" && (
+                <>
+                  <div className="flex justify-between gap-3">
+                    <dt className="text-[var(--muted)]">Elevation</dt>
+                    <dd className="font-medium text-[var(--ink)]">
+                      {place.elevation ? `${place.elevation} m` : "—"}
+                    </dd>
+                  </div>
+                  <div className="flex justify-between gap-3">
+                    <dt className="text-[var(--muted)]">Hours</dt>
+                    <dd className="font-medium text-[var(--ink)]">
+                      {place.hours_needed || "—"}
+                    </dd>
+                  </div>
+                  <div className="flex justify-between gap-3">
+                    <dt className="text-[var(--muted)]">Recommendation</dt>
+                    <dd className="font-medium text-[var(--ink)]">
+                      {place.mountain_recommendation === "diy" ? "DIY" : place.mountain_recommendation === "tour" ? "Tour package" : "—"}
+                    </dd>
+                  </div>
+                </>
+              )}
             </dl>
           </aside>
         </div>

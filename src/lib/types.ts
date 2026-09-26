@@ -1,4 +1,4 @@
-export type PlaceType = "restaurant" | "coffee_shop" | "horizon" | "other";
+export type PlaceType = "restaurant" | "coffee_shop" | "horizon" | "mountain" | "other";
 export type ReturnIntent = "plan_to_return" | "never_return" | "undecided";
 export type UserRole = "user";
 
@@ -15,6 +15,10 @@ export interface Place {
   opens_at: string | null;
   closes_at: string | null;
   photos: string[];
+  // Mountain-specific optional metadata
+  elevation?: number | null;
+  hours_needed?: string | null;
+  mountain_recommendation?: "diy" | "tour" | null;
   /** Current user's visit status (personal, not shared). */
   is_visited: boolean;
   visited_at: string | null;
@@ -43,6 +47,10 @@ export interface PlaceInput {
   opens_at?: string;
   closes_at?: string;
   photos?: string[];
+  // Optional mountain fields
+  elevation?: number | null;
+  hours_needed?: string | null;
+  mountain_recommendation?: "diy" | "tour" | null;
 }
 
 export interface VisitInput {
@@ -54,6 +62,9 @@ export interface VisitInput {
   food_worth_price: boolean;
   return_intent: ReturnIntent;
   visit_notes?: string;
+  // Optional mountain-specific visit fields
+  mountain_rating?: number;
+  was_mountain_good?: boolean;
 }
 
 export interface UserVisit {
@@ -69,12 +80,16 @@ export interface UserVisit {
   food_worth_price: boolean;
   return_intent: ReturnIntent;
   visit_notes: string | null;
+  // Optional mountain-specific fields
+  mountain_rating?: number | null;
+  was_mountain_good?: boolean | null;
 }
 
 export const PLACE_TYPE_LABELS: Record<PlaceType, string> = {
   restaurant: "Restaurant",
   coffee_shop: "Coffee Shop",
   horizon: "Horizon",
+  mountain: "Mountain",
   other: "Other",
 };
 
@@ -87,8 +102,9 @@ export const RETURN_INTENT_LABELS: Record<ReturnIntent, string> = {
 /** Normalize legacy DB/local values (e.g. landmark → horizon). */
 export function normalizePlaceType(value: unknown): PlaceType {
   if (value === "landmark" || value === "horizon") return "horizon";
+  if (value === "mountain") return "mountain";
   if (value === "restaurant" || value === "coffee_shop" || value === "other") {
-    return value;
+    return value as PlaceType;
   }
   return "other";
 }

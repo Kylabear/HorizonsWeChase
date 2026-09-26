@@ -131,6 +131,10 @@ function normalizePlace(row: Record<string, unknown>): Place {
     opens_at: (row.opens_at as string) ?? null,
     closes_at: (row.closes_at as string) ?? null,
     photos: Array.isArray(row.photos) ? (row.photos as string[]) : [],
+    // mountain metadata
+    elevation: (row.elevation as number) ?? null,
+    hours_needed: (row.hours_needed as string) ?? null,
+    mountain_recommendation: (row.mountain_recommendation as string) ?? null,
     ...EMPTY_VISIT,
     created_by: (row.created_by as string) ?? null,
     created_at: String(row.created_at),
@@ -152,21 +156,28 @@ function normalizeVisit(row: Record<string, unknown>): UserVisit {
     food_worth_price: Boolean(row.food_worth_price),
     return_intent: (row.return_intent as ReturnIntent) || "undecided",
     visit_notes: (row.visit_notes as string) ?? null,
+    mountain_rating: row.mountain_rating !== undefined ? Number(row.mountain_rating) : null,
+    was_mountain_good: row.was_mountain_good !== undefined ? Boolean(row.was_mountain_good) : null,
   };
 }
 
 function applyVisit(place: Place, visit: UserVisit | undefined): Place {
   if (!visit) return { ...place, ...EMPTY_VISIT };
+
+  // If the visit includes mountain-specific rating, map it into the existing rating fields
+  const mountainRating = visit.mountain_rating ?? null;
+  const wasMountainGood = visit.was_mountain_good ?? null;
+
   return {
     ...place,
     is_visited: true,
     visited_at: visit.visited_at,
-    rating_ambiance: visit.rating_ambiance,
-    rating_food: visit.rating_food,
-    rating_drinks: visit.rating_drinks,
-    rating_location: visit.rating_location,
-    rating_pricing: visit.rating_pricing,
-    food_worth_price: visit.food_worth_price,
+    rating_ambiance: mountainRating ?? visit.rating_ambiance,
+    rating_food: mountainRating ?? visit.rating_food,
+    rating_drinks: mountainRating ?? visit.rating_drinks,
+    rating_location: mountainRating ?? visit.rating_location,
+    rating_pricing: mountainRating ?? visit.rating_pricing,
+    food_worth_price: wasMountainGood ?? visit.food_worth_price,
     return_intent: visit.return_intent,
     visit_notes: visit.visit_notes,
   };
@@ -274,6 +285,10 @@ export async function createPlace(
     opens_at: input.opens_at || null,
     closes_at: input.closes_at || null,
     photos: input.photos || [],
+    // mountain fields
+    elevation: input.elevation ?? null,
+    hours_needed: input.hours_needed ?? null,
+    mountain_recommendation: input.mountain_recommendation ?? null,
     created_by: createdBy,
     created_at: now,
     updated_at: now,
@@ -366,6 +381,9 @@ export async function markVisited(
       food_worth_price: visit.food_worth_price,
       return_intent: visit.return_intent,
       visit_notes: visit.visit_notes || null,
+      // mountain-specific
+      mountain_rating: visit.mountain_rating ?? null,
+      was_mountain_good: visit.was_mountain_good ?? null,
       updated_at: now,
     };
 
@@ -396,6 +414,8 @@ export async function markVisited(
       food_worth_price: visit.food_worth_price,
       return_intent: visit.return_intent,
       visit_notes: visit.visit_notes || null,
+      mountain_rating: visit.mountain_rating ?? null,
+      was_mountain_good: visit.was_mountain_good ?? null,
     });
   }
 
@@ -416,6 +436,8 @@ export async function markVisited(
     food_worth_price: visit.food_worth_price,
     return_intent: visit.return_intent,
     visit_notes: visit.visit_notes || null,
+    mountain_rating: visit.mountain_rating ?? null,
+    was_mountain_good: visit.was_mountain_good ?? null,
   };
 
   if (index >= 0) visits[index] = record;
