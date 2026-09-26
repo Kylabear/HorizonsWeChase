@@ -46,7 +46,7 @@ export function PlaceCard({ place, index = 0 }: PlaceCardProps) {
       onMouseLeave={() => setPaused(false)}
     >
       <Link href={`/places/${place.id}`} className="block">
-        <div className="relative aspect-[4/3] overflow-hidden bg-[var(--sand)]">
+        <div className="relative aspect-[3/2] overflow-hidden bg-[var(--sand)]">
           {photo ? (
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
@@ -99,7 +99,7 @@ export function PlaceCard({ place, index = 0 }: PlaceCardProps) {
           )}
         </div>
 
-        <div className="space-y-1 p-2 sm:space-y-1.5 sm:p-3">
+        <div className="space-y-1.5 p-2 sm:p-3">
           <h3 className="line-clamp-2 font-[family-name:var(--font-display)] text-sm leading-snug text-[var(--ink)] sm:text-base">
             {place.name}
           </h3>
@@ -107,11 +107,6 @@ export function PlaceCard({ place, index = 0 }: PlaceCardProps) {
             <MapPin className="mt-0.5 h-3 w-3 shrink-0" />
             <span className="line-clamp-1">{place.location}</span>
           </p>
-          {place.description && (
-            <p className="hidden line-clamp-1 text-xs leading-relaxed text-[var(--ink)]/70 sm:block">
-              {place.description}
-            </p>
-          )}
           <div className="pt-0.5">
             <span
               className={cn(

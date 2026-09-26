@@ -13,14 +13,14 @@ function getUsers(): AppUser[] {
     {
       id: "1",
       username: "kyla",
-      password: process.env.USER_KYLA_PASSWORD || "MyprettyBeybb",
+      password: process.env.USER_KYLA_PASSWORD || "142003",
       name: "Kyla",
       role: "user",
     },
     {
       id: "2",
       username: "cedes",
-      password: process.env.USER_CEDES_PASSWORD || "123@testingpass",
+      password: process.env.USER_CEDES_PASSWORD || "221998",
       name: "Cedes",
       role: "user",
     },
